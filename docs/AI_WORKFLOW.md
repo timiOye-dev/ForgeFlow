@@ -104,6 +104,8 @@ Never begin implementation until the user explicitly replies:
 
 "Approved. Proceed with implementation."
 
+If any instruction is unclear or multiple implementation approaches are possible, ask for clarification instead of making assumptions.
+
 ---
 
 # Development Workflow
