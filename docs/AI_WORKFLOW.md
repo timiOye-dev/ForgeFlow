@@ -100,6 +100,10 @@ At the beginning of every implementation session:
 
 Never begin implementation without first confirming your understanding of the task.
 
+Never begin implementation until the user explicitly replies:
+
+"Approved. Proceed with implementation."
+
 ---
 
 # Development Workflow
