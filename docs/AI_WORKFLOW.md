@@ -253,3 +253,18 @@ Before making any implementation decision, evaluate the following questions:
 6. Should this decision be documented for future contributors?
 
 If any answer is "No" or uncertain, stop and explain the concern before proceeding.
+
+# Ticket Completion
+
+Before considering a ticket complete:
+
+1. Generate a completion report.
+2. List every file modified.
+3. Explain why each file was modified.
+4. List every command executed.
+5. Report verification results.
+6. Report assumptions made.
+7. Report technical debt introduced.
+8. Recommend follow-up work.
+
+Wait for the user's review before considering the ticket complete.

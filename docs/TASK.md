@@ -99,11 +99,11 @@ ForgeFlow tracks every task using the following workflow:
 | ID | Task | Priority | Complexity | Status |
 |----|------|----------|------------|--------|
 | FF-001 | Initialize React Project | P0 | S | 🟢 Done |
-| FF-002 | Configure Tailwind CSS | P0 | S | 🔵 In Progress |
-| FF-003 | Configure shadcn/ui | P0 | S | ⬜ Backlog |
-| FF-004 | Configure React Router | P0 | S | ⬜ Backlog |
-| FF-005 | Create Feature-First Folder Structure | P0 | S | ⬜ Backlog |
-| FF-006 | Configure ESLint & Prettier | P1 | S | ⬜ Backlog |
+| FF-002 | Configure Tailwind CSS | P0 | S | 🟢 Verified Complete |
+| FF-003 | Configure shadcn/ui | P0 | S | 🟢 Done |
+| FF-004 | Configure React Router | P0 | S | 🟢 Done |
+| FF-005 | Create Feature-First Folder Structure | P0 | S | 🟢 Done |
+| FF-006 | Configure ESLint & Prettier | P1 | S | 🟢 Done |
 
 > Update this table whenever a task changes status. This table should always reflect the current state of the project.
 
@@ -160,32 +160,52 @@ Complexity
 
 S
 
+Scope
+- Install and configure Tailwind CSS.
+- Verify styling works.
+- Do not modify routing, layouts, or folder structure.
+
+
 Definition of Done
 
-- Tailwind installed
-- Global styles working
-- Test page styled successfully
+- Tailwind CSS is installed and configured correctly.
+- Global styles are applied successfully.
+- A test page confirms Tailwind utility classes are working.
+- The application runs without errors.
+- No unrelated files or features were modified.
 
 ---
 
 FF-003
 
-Title
+ Title
+Initialize shadcn/ui Design System
 
-Configure shadcn/ui
-
-Priority
-
+ Priority
 P0
 
-Complexity
-
+ Complexity
 S
 
-Definition of Done
+ Scope
+- Install and initialize shadcn/ui.
+- Configure the project for shadcn/ui components.
+- Verify compatibility with Tailwind CSS v4.
+- Generate one test component (Button).
+- Confirm the component renders correctly.
+- Do not build application pages or layouts.
 
-- shadcn initialized
-- First UI component renders correctly
+ Definition of Done
+- shadcn/ui initialized successfully.
+- Required configuration files generated.
+- Button component generated successfully.
+- Button renders correctly in the application.
+- Project builds and lints successfully.
+- No unrelated files modified.
+
+ Depends On
+FF-002
+
 
 ---
 

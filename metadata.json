@@ -1,0 +1,6 @@
+{
+  "name": "ForgeFlow",
+  "description": "Modern web-based project management workspace for freelancers and small teams.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
