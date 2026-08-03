@@ -108,6 +108,19 @@ If any instruction is unclear or multiple implementation approaches are possible
 
 ---
 
+
+# Project Documentation
+
+Before beginning a ticket:
+
+1. Read the project documentation in the current workspace.
+2. If documentation conflicts with earlier conversation context, follow the documentation.
+3. Report every file modified before considering the ticket complete.
+4. Generate a completion report for user review.
+
+---
+
+
 # Development Workflow
 
 Every ticket follows this process:
