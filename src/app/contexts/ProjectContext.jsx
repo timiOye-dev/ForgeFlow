@@ -5,8 +5,14 @@ const ProjectContext = createContext(null);
 
 export const ProjectProvider = ({ children }) => {
   const [projects, setProjects] = useState(() => {
-    const saved = localStorage.getItem('forgeflow_projects');
-    return saved ? JSON.parse(saved) : INITIAL_PROJECTS;
+    try {
+      const saved = localStorage.getItem('forgeflow_projects');
+      if (!saved) return INITIAL_PROJECTS;
+      const parsed = JSON.parse(saved);
+      return Array.isArray(parsed) ? parsed : INITIAL_PROJECTS;
+    } catch {
+      return INITIAL_PROJECTS;
+    }
   });
 
   useEffect(() => {

@@ -5,8 +5,14 @@ const TaskContext = createContext(null);
 
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState(() => {
-    const saved = localStorage.getItem('forgeflow_tasks');
-    return saved ? JSON.parse(saved) : INITIAL_TASKS;
+    try {
+      const saved = localStorage.getItem('forgeflow_tasks');
+      if (!saved) return INITIAL_TASKS;
+      const parsed = JSON.parse(saved);
+      return Array.isArray(parsed) ? parsed : INITIAL_TASKS;
+    } catch {
+      return INITIAL_TASKS;
+    }
   });
 
   useEffect(() => {
