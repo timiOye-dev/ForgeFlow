@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { TopNav } from '../../shared/components/TopNav';
