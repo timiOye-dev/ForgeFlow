@@ -1,11 +1,11 @@
-import { useNavigate } from 'react';
-import { 
-  FolderKanban, 
-  CheckSquare, 
-  Clock, 
-  DollarSign, 
-  Calendar, 
-  CheckCircle2, 
+import { useNavigate } from 'react-router-dom';
+import {
+  FolderKanban,
+  CheckSquare,
+  Clock,
+  DollarSign,
+  Calendar,
+  CheckCircle2,
   Layers,
   ArrowUpRight
 } from 'lucide-react';
@@ -26,7 +26,7 @@ export const DashboardPage = () => {
   const activeProjects = projects.filter(p => p.status === 'In Progress' || p.status === 'In Review').length;
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter(t => t.status === 'Done').length;
-  
+
   const totalLoggedHours = tasks.reduce((sum, t) => sum + (t.loggedHours || 0), 0);
   const totalEstimatedHours = tasks.reduce((sum, t) => sum + (t.estimatedHours || 0), 0);
 
