@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -7,12 +8,14 @@ import {
   Plus, 
   LogOut, 
   Zap, 
-  ChevronRight
+  ChevronRight,
+  X
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../../app/contexts/AuthContext';
 import { useProjects } from '../../app/contexts/ProjectContext';
 
-export const Sidebar = ({ onOpenCreateProject }) => {
+const SidebarContent = ({ onOpenCreateProject, onNavigate }) => {
   const { user, logout } = useAuth();
   const { projects } = useProjects();
   const navigate = useNavigate();
@@ -26,8 +29,17 @@ export const Sidebar = ({ onOpenCreateProject }) => {
 
   const recentProjects = projects.slice(0, 4);
 
+  const handleNavigation = (path) => {
+    onNavigate?.(path);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
-    <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0 h-screen sticky top-0">
+    <>
       <div>
         <div className="p-5 flex items-center justify-between border-b border-slate-800/80">
           <div className="flex items-center gap-2.5">
@@ -64,6 +76,7 @@ export const Sidebar = ({ onOpenCreateProject }) => {
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={() => handleNavigation(item.path)}
                 className={({ isActive }) =>
                   `flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     isActive
@@ -91,7 +104,7 @@ export const Sidebar = ({ onOpenCreateProject }) => {
             <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
               Active Projects
             </span>
-            <NavLink to="/projects" className="text-xs text-indigo-400 hover:underline">
+            <NavLink to="/projects" onClick={() => handleNavigation('/projects')} className="text-xs text-indigo-400 hover:underline">
               View all
             </NavLink>
           </div>
@@ -100,6 +113,7 @@ export const Sidebar = ({ onOpenCreateProject }) => {
               <NavLink
                 key={p.id}
                 to={`/projects/${p.id}`}
+                onClick={() => handleNavigation(`/projects/${p.id}`)}
                 className={({ isActive }) =>
                   `flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                     isActive
@@ -136,10 +150,7 @@ export const Sidebar = ({ onOpenCreateProject }) => {
             </div>
           </div>
           <button
-            onClick={() => {
-              logout();
-              navigate('/login');
-            }}
+            onClick={handleLogout}
             title="Sign out"
             className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors"
           >
@@ -147,6 +158,70 @@ export const Sidebar = ({ onOpenCreateProject }) => {
           </button>
         </div>
       </div>
-    </aside>
+    </>
+  );
+};
+
+export const Sidebar = ({ onOpenCreateProject, mobileOpen, onClose }) => {
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileOpen, onClose]);
+
+  return (
+    <>
+      <aside className="hidden md:flex w-64 bg-slate-900 border-r border-slate-800 flex-col justify-between shrink-0 h-screen sticky top-0">
+        <SidebarContent onOpenCreateProject={onOpenCreateProject} />
+      </aside>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <div className="md:hidden fixed inset-0 z-50">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+              onClick={onClose}
+            />
+            <motion.aside
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'tween', duration: 0.25, ease: 'easeInOut' }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Navigation menu"
+              className="fixed inset-y-0 left-0 w-64 max-w-[85vw] bg-slate-900 border-r border-slate-800 flex flex-col justify-between shadow-2xl"
+            >
+              <div className="flex items-center justify-end p-2 border-b border-slate-800/80 md:hidden">
+                <button
+                  onClick={onClose}
+                  aria-label="Close navigation menu"
+                  className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="flex-1 flex flex-col justify-between overflow-y-auto -mr-3 pr-3">
+                <SidebarContent onOpenCreateProject={onOpenCreateProject} onNavigate={onClose} />
+              </div>
+            </motion.aside>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
