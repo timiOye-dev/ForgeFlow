@@ -3,7 +3,7 @@ import { Menu, Search, Bell, FolderPlus, CheckSquare, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useProjects } from '../../app/contexts/ProjectContext';
 import { useTasks } from '../../app/contexts/TaskContext';
-import { useAuth } from '../../app/contexts/AuthContext';
+import { UserMenu } from './UserMenu';
 
 export const TopNav = ({ onOpenCreateProject, onOpenCreateTask, onToggleSidebar }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -11,7 +11,6 @@ export const TopNav = ({ onOpenCreateProject, onOpenCreateTask, onToggleSidebar 
   const [showNotifications, setShowNotifications] = useState(false);
   const { projects } = useProjects();
   const { tasks } = useTasks();
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   const filteredProjects = searchQuery.trim()
@@ -168,16 +167,7 @@ export const TopNav = ({ onOpenCreateProject, onOpenCreateTask, onToggleSidebar 
           )}
         </div>
 
-        <div
-          onClick={() => navigate('/account')}
-          className="flex items-center gap-2 cursor-pointer p-1 rounded-lg hover:bg-slate-800 transition-colors"
-        >
-          <img
-            src={user?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'}
-            alt={user?.name}
-            className="w-8 h-8 rounded-full object-cover border border-indigo-500/30"
-          />
-        </div>
+        <UserMenu />
       </div>
     </header>
   );
