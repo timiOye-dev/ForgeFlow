@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
+  FolderKanban, 
   Calendar, 
   DollarSign, 
   CheckSquare, 
@@ -16,6 +17,7 @@ import {
 import { useProjects } from '../../app/contexts/ProjectContext';
 import { useTasks } from '../../app/contexts/TaskContext';
 import { Badge } from '../../shared/components/Badge';
+import { EmptyState } from '../../shared/components/EmptyState';
 import { CreateTaskModal } from '../tasks/components/CreateTaskModal';
 
 export const ProjectDetailPage = () => {
@@ -46,17 +48,20 @@ export const ProjectDetailPage = () => {
 
   if (!project) {
     return (
-      <div className="p-8 text-center bg-slate-900 border border-slate-800 rounded-xl">
-        <h2 className="text-lg font-bold text-slate-100">Project Not Found</h2>
-        <p className="text-xs text-slate-400 mt-1">The requested project could not be found.</p>
-        <button
-          onClick={() => navigate('/projects')}
-          className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold"
-        >
-          Back to Projects
-        </button>
-      </div>
-    );
+      <EmptyState
+        icon={FolderKanban}
+        title="Project Not Found"
+        description="The requested project could not be found."
+        action={
+          <button
+            onClick={() => navigate('/projects')}
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition-colors"
+          >
+            Back to Projects
+          </button>
+        }
+      />
+    )
   }
 
   const handleAddMilestoneSubmit = (e) => {
@@ -276,7 +281,21 @@ export const ProjectDetailPage = () => {
                 </div>
               ))
             ) : (
-              <p className="text-xs text-slate-500 py-6 text-center italic">No tasks created for this project yet.</p>
+              <EmptyState
+                icon={CheckSquare}
+                title="No tasks yet"
+                description="No tasks created for this project yet."
+                className="py-10"
+                action={
+                  <button
+                    onClick={() => setIsTaskModalOpen(true)}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Task</span>
+                  </button>
+                }
+              />
             )}
           </div>
         </div>

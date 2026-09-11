@@ -14,6 +14,7 @@ import {
 import { useProjects } from '../../app/contexts/ProjectContext';
 import { useTasks } from '../../app/contexts/TaskContext';
 import { Badge } from '../../shared/components/Badge';
+import { EmptyState } from '../../shared/components/EmptyState';
 import { CreateProjectModal } from './components/CreateProjectModal';
 
 export const ProjectListPage = () => {
@@ -201,11 +202,12 @@ export const ProjectListPage = () => {
             );
           })
         ) : (
-          <div className="col-span-full text-center py-12 p-8 rounded-xl bg-slate-900 border border-slate-800 text-slate-400">
-            <FolderKanban className="w-10 h-10 mx-auto text-slate-600 mb-2" />
-            <p className="text-sm font-semibold text-slate-200">No projects found</p>
-            <p className="text-xs text-slate-500 mt-1">Try resetting your filters or creating a new project.</p>
-          </div>
+          <EmptyState
+            icon={FolderKanban}
+            title="No projects found"
+            description="Try resetting your filters or creating a new project."
+            className="col-span-full"
+          />
         )}
       </div>
 

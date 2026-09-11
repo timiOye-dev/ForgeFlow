@@ -11,6 +11,7 @@ import {
 import { useTasks } from '../../app/contexts/TaskContext';
 import { useProjects } from '../../app/contexts/ProjectContext';
 import { Badge } from '../../shared/components/Badge';
+import { EmptyState } from '../../shared/components/EmptyState';
 import { CreateTaskModal } from './components/CreateTaskModal';
 
 export const TaskListPage = () => {
@@ -184,11 +185,11 @@ export const TaskListPage = () => {
             );
           })
         ) : (
-          <div className="text-center py-12 p-8 rounded-xl bg-slate-900 border border-slate-800 text-slate-400">
-            <CheckSquare className="w-10 h-10 mx-auto text-slate-600 mb-2" />
-            <p className="text-sm font-semibold text-slate-200">No tasks found</p>
-            <p className="text-xs text-slate-500 mt-1">Try adjusting your filters or adding a new task.</p>
-          </div>
+          <EmptyState
+            icon={CheckSquare}
+            title="No tasks found"
+            description="Try adjusting your filters or adding a new task."
+          />
         )}
       </div>
 
