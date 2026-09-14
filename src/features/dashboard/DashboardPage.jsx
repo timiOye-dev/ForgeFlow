@@ -13,6 +13,7 @@ import { useProjects } from '../../app/contexts/ProjectContext';
 import { useTasks } from '../../app/contexts/TaskContext';
 import { Badge } from '../../shared/components/Badge';
 import { DashboardStats } from './components/DashboardStats';
+import { RecentActivity } from './components/RecentActivity';
 
 export const DashboardPage = () => {
   const { user } = useAuth();
@@ -180,6 +181,9 @@ export const DashboardPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Recent Activity */}
+      <RecentActivity />
     </div>
   );
 };
