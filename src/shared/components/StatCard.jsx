@@ -1,6 +1,8 @@
 export const StatCard = ({ title, value, subtext, icon: Icon, color = 'blue', trend }) => {
   const getColorStyles = () => {
     switch (color) {
+      case 'indigo':
+        return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
       case 'purple':
         return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
       case 'emerald':
