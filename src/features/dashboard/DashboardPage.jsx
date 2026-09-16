@@ -15,6 +15,7 @@ import { Badge } from '../../shared/components/Badge';
 import { DashboardStats } from './components/DashboardStats';
 import { RecentActivity } from './components/RecentActivity';
 import { UpcomingDeadlines } from './components/UpcomingDeadlines';
+import { QuickActions } from './components/QuickActions';
 
 export const DashboardPage = () => {
   const { user } = useAuth();
@@ -44,6 +45,9 @@ export const DashboardPage = () => {
           </p>
         </div>
       </div>
+
+      {/* Quick Actions */}
+      <QuickActions />
 
       {/* High-level Metric Stat Cards */}
       <DashboardStats />

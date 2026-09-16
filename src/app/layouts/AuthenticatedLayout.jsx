@@ -31,7 +31,7 @@ export const AuthenticatedLayout = () => {
           onToggleSidebar={() => setIsSidebarOpen(true)}
         />
         <main className="flex-1 p-4 md:p-6 overflow-y-auto">
-          <Outlet />
+          <Outlet context={{ onOpenCreateProject: () => setIsProjectModalOpen(true), onOpenCreateTask: () => setIsTaskModalOpen(true) }} />
         </main>
       </div>
 
