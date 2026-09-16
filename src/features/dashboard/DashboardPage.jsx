@@ -14,6 +14,7 @@ import { useTasks } from '../../app/contexts/TaskContext';
 import { Badge } from '../../shared/components/Badge';
 import { DashboardStats } from './components/DashboardStats';
 import { RecentActivity } from './components/RecentActivity';
+import { UpcomingDeadlines } from './components/UpcomingDeadlines';
 
 export const DashboardPage = () => {
   const { user } = useAuth();
@@ -184,6 +185,9 @@ export const DashboardPage = () => {
 
       {/* Recent Activity */}
       <RecentActivity />
+
+      {/* Upcoming Deadlines */}
+      <UpcomingDeadlines />
     </div>
   );
 };
