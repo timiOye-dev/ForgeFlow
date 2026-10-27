@@ -41,6 +41,8 @@ export const TopNav = ({ onOpenCreateProject, onOpenCreateTask, onToggleSidebar 
           <div className="relative flex items-center">
             <Search className="w-4 h-4 absolute left-3 text-slate-500 pointer-events-none" />
             <input
+              id="global-search"
+              name="global-search"
               type="text"
               placeholder="Search projects, tasks, or clients..."
               value={searchQuery}
