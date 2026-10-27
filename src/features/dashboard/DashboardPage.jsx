@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import {
   FolderKanban,
   CheckSquare,
@@ -6,12 +6,14 @@ import {
   Calendar,
   CheckCircle2,
   Layers,
-  ArrowUpRight
+  ArrowUpRight,
+  Plus
 } from 'lucide-react';
 import { useAuth } from '../../app/contexts/AuthContext';
 import { useProjects } from '../../app/contexts/ProjectContext';
 import { useTasks } from '../../app/contexts/TaskContext';
 import { Badge } from '../../shared/components/Badge';
+import { EmptyState } from '../../shared/components/EmptyState';
 import { DashboardStats } from './components/DashboardStats';
 import { RecentActivity } from './components/RecentActivity';
 import { UpcomingDeadlines } from './components/UpcomingDeadlines';
@@ -22,12 +24,48 @@ export const DashboardPage = () => {
   const { projects } = useProjects();
   const { tasks, toggleTaskStatus } = useTasks();
   const navigate = useNavigate();
+  const { onOpenCreateProject } = useOutletContext() || {};
 
   // Metrics calculation
   const activeProjects = projects.filter(p => p.status === 'In Progress' || p.status === 'In Review').length;
 
   const pendingTasks = tasks.filter(t => t.status !== 'Done').slice(0, 5);
   const recentProjects = projects.slice(0, 3);
+
+  const isDashboardEmpty = projects.length === 0 && tasks.length === 0;
+
+  if (isDashboardEmpty) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+            <FolderKanban className="w-5 h-5 text-indigo-400" />
+            <span>Dashboard</span>
+          </h1>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Get started by creating your first project
+          </p>
+        </div>
+
+        <EmptyState
+          icon={FolderKanban}
+          title="Your workspace is ready"
+          description="Create your first project to start tracking tasks, deadlines, and progress."
+          action={
+            onOpenCreateProject ? (
+              <button
+                onClick={onOpenCreateProject}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-colors shadow-sm"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Create First Project</span>
+              </button>
+            ) : null
+          }
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
