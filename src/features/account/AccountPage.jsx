@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { User, Save, CheckCircle2, RefreshCw } from 'lucide-react';
 import { useAuth } from '../../app/contexts/AuthContext';
-import { INITIAL_USER, INITIAL_PROJECTS, INITIAL_TASKS } from '../../mocks/initialData';
+import { INITIAL_PROJECTS, INITIAL_TASKS } from '../../mocks/initialData';
 
 export const AccountPage = () => {
   const { user, updateProfile } = useAuth();
@@ -14,22 +14,37 @@ export const AccountPage = () => {
   });
 
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [saveError, setSaveError] = useState('')
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    updateProfile(formData);
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 3000);
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setSaveError('')
+
+    const result = await updateProfile(formData)
+    if (!result.success) {
+      setSaveError(result.error.message)
+      return
+    }
+
+    const updated = result.user
+    setFormData({
+      name: updated.name || '',
+      email: updated.email || '',
+      title: updated.title || '',
+      bio: updated.bio || '',
+      avatar: updated.avatar || '',
+    })
+    setSavedSuccess(true)
+    setTimeout(() => setSavedSuccess(false), 3000)
+  }
 
   const handleResetData = () => {
-    if (window.confirm('Reset workspace data back to initial demo state? All local modifications will be restored.')) {
-      localStorage.setItem('forgeflow_user', JSON.stringify(INITIAL_USER));
-      localStorage.setItem('forgeflow_projects', JSON.stringify(INITIAL_PROJECTS));
-      localStorage.setItem('forgeflow_tasks', JSON.stringify(INITIAL_TASKS));
-      window.location.reload();
+    if (window.confirm('Reset workspace data back to the initial demo state? Your account and profile settings will be preserved.')) {
+      localStorage.setItem('forgeflow_projects', JSON.stringify(INITIAL_PROJECTS))
+      localStorage.setItem('forgeflow_tasks', JSON.stringify(INITIAL_TASKS))
+      window.location.reload()
     }
-  };
+  }
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -47,6 +62,15 @@ export const AccountPage = () => {
         <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4" />
           <span>Profile settings updated successfully!</span>
+        </div>
+      )}
+
+      {saveError && (
+        <div
+          role="alert"
+          className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs"
+        >
+          {saveError}
         </div>
       )}
 

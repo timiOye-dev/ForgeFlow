@@ -1,7 +1,13 @@
+export const DEMO_CREDENTIALS = Object.freeze({
+  email: 'demo@forgeflow.local',
+  password: 'password123',
+  label: 'Timilehin Oye',
+})
+
 export const INITIAL_USER = {
   id: 'usr_101',
   name: 'Timilehin Oye',
-  email: 'timioye84@gmail.com',
+  email: 'demo@forgeflow.local',
   avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
   title: 'Freelance Full-Stack Developer & Product Engineer',
   bio: 'Building modern web applications, scalable client software, and automated workflows.',
