@@ -51,8 +51,8 @@ export const LoginPage = () => {
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-6 text-slate-100">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <div
-            onClick={() => navigate('/')}
+          <Link
+            to="/"
             className="inline-flex items-center gap-2 cursor-pointer mb-3"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
@@ -61,7 +61,7 @@ export const LoginPage = () => {
             <span className="font-bold text-2xl tracking-tight text-white">
               ForgeFlow
             </span>
-          </div>
+          </Link>
           <h2 className="text-xl font-bold text-slate-100">Welcome back</h2>
           <p className="text-xs text-slate-400 mt-1">
             Sign in to your project workspace
@@ -71,12 +71,16 @@ export const LoginPage = () => {
         <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl">
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             <div>
-              <label className="block font-medium text-slate-300 mb-1">
+              <label
+                htmlFor="login-email"
+                className="block font-medium text-slate-300 mb-1"
+              >
                 Email Address
               </label>
               <div className="relative flex items-center">
                 <Mail className="w-4 h-4 absolute left-3 text-slate-500" />
                 <input
+                  id="login-email"
                   type="email"
                   required
                   value={email}
@@ -89,7 +93,12 @@ export const LoginPage = () => {
 
             <div>
               <div className="flex justify-between mb-1">
-                <label className="font-medium text-slate-300">Password</label>
+                <label
+                  htmlFor="login-password"
+                  className="font-medium text-slate-300"
+                >
+                  Password
+                </label>
                 <Link
                   to="/forgot-password"
                   className="text-indigo-400 hover:underline"
@@ -100,6 +109,7 @@ export const LoginPage = () => {
               <div className="relative flex items-center">
                 <Lock className="w-4 h-4 absolute left-3 text-slate-500" />
                 <input
+                  id="login-password"
                   type="password"
                   required
                   minLength={PASSWORD_MIN_LENGTH}

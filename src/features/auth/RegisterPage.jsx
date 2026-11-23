@@ -37,8 +37,8 @@ export const RegisterPage = () => {
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-6 text-slate-100">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <div
-            onClick={() => navigate('/')}
+          <Link
+            to="/"
             className="inline-flex items-center gap-2 cursor-pointer mb-3"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
@@ -47,7 +47,7 @@ export const RegisterPage = () => {
             <span className="font-bold text-2xl tracking-tight text-white">
               ForgeFlow
             </span>
-          </div>
+          </Link>
           <h2 className="text-xl font-bold text-slate-100">
             Create an account
           </h2>
@@ -59,12 +59,16 @@ export const RegisterPage = () => {
         <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl">
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             <div>
-              <label className="block font-medium text-slate-300 mb-1">
+              <label
+                htmlFor="register-name"
+                className="block font-medium text-slate-300 mb-1"
+              >
                 Full Name
               </label>
               <div className="relative flex items-center">
                 <User className="w-4 h-4 absolute left-3 text-slate-500" />
                 <input
+                  id="register-name"
                   type="text"
                   required
                   value={name}
@@ -76,12 +80,16 @@ export const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="block font-medium text-slate-300 mb-1">
+              <label
+                htmlFor="register-email"
+                className="block font-medium text-slate-300 mb-1"
+              >
                 Email Address
               </label>
               <div className="relative flex items-center">
                 <Mail className="w-4 h-4 absolute left-3 text-slate-500" />
                 <input
+                  id="register-email"
                   type="email"
                   required
                   value={email}
@@ -93,12 +101,16 @@ export const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="block font-medium text-slate-300 mb-1">
+              <label
+                htmlFor="register-password"
+                className="block font-medium text-slate-300 mb-1"
+              >
                 Password
               </label>
               <div className="relative flex items-center">
                 <Lock className="w-4 h-4 absolute left-3 text-slate-500" />
                 <input
+                  id="register-password"
                   type="password"
                   required
                   minLength={PASSWORD_MIN_LENGTH}
@@ -112,12 +124,16 @@ export const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="block font-medium text-slate-300 mb-1">
+              <label
+                htmlFor="register-confirm-password"
+                className="block font-medium text-slate-300 mb-1"
+              >
                 Confirm Password
               </label>
               <div className="relative flex items-center">
                 <Lock className="w-4 h-4 absolute left-3 text-slate-500" />
                 <input
+                  id="register-confirm-password"
                   type="password"
                   required
                   minLength={PASSWORD_MIN_LENGTH}

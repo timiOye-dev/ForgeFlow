@@ -8,17 +8,14 @@ export const LandingPage = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between">
       <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40 px-6 py-4 flex items-center justify-between max-w-7xl mx-auto w-full">
-        <div
-          className="flex items-center gap-2.5 cursor-pointer"
-          onClick={() => navigate('/')}
-        >
+        <Link to="/" className="flex items-center gap-2.5 cursor-pointer">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
             <Zap className="w-5 h-5 fill-current" />
           </div>
           <span className="font-bold text-xl tracking-tight text-white">
             ForgeFlow
           </span>
-        </div>
+        </Link>
 
         <div className="flex items-center gap-4">
           <Link
