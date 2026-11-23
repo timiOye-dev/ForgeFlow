@@ -7,6 +7,7 @@ import { LandingPage } from '../../features/auth/LandingPage'
 import { LoginPage } from '../../features/auth/LoginPage'
 import { RegisterPage } from '../../features/auth/RegisterPage'
 import { ForgotPasswordPage } from '../../features/auth/ForgotPasswordPage'
+import { NotFoundPage } from '../../features/auth/NotFoundPage'
 
 import { DashboardPage } from '../../features/dashboard/DashboardPage'
 import { ProjectListPage } from '../../features/projects/ProjectListPage'
@@ -31,6 +32,7 @@ export const AppRouter = () => {
           <Route path="/tasks" element={<TaskListPage />} />
           <Route path="/account" element={<AccountPage />} />
         </Route>
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   )
