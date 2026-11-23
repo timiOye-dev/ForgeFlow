@@ -1,9 +1,9 @@
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { FolderKanban, FolderPlus, CheckSquare } from 'lucide-react';
+import { useNavigate, useOutletContext } from 'react-router-dom'
+import { FolderKanban, FolderPlus, CheckSquare } from 'lucide-react'
 
 export const QuickActions = () => {
-  const { onOpenCreateProject, onOpenCreateTask } = useOutletContext();
-  const navigate = useNavigate();
+  const { onOpenCreateProject, onOpenCreateTask } = useOutletContext()
+  const navigate = useNavigate()
 
   return (
     <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3 shadow-sm">
@@ -39,5 +39,5 @@ export const QuickActions = () => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}

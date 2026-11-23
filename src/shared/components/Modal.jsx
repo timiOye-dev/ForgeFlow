@@ -1,21 +1,27 @@
-import { useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { X } from 'lucide-react';
+import { useEffect } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
+import { X } from 'lucide-react'
 
-export const Modal = ({ isOpen, onClose, title, children, maxWidth = 'max-w-lg' }) => {
+export const Modal = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+  maxWidth = 'max-w-lg',
+}) => {
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-    };
+      if (e.key === 'Escape') onClose()
+    }
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden'
+      window.addEventListener('keydown', handleKeyDown)
     }
     return () => {
-      document.body.style.overflow = 'unset';
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, onClose]);
+      document.body.style.overflow = 'unset'
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isOpen, onClose])
 
   return (
     <AnimatePresence>
@@ -50,5 +56,5 @@ export const Modal = ({ isOpen, onClose, title, children, maxWidth = 'max-w-lg' 
         </div>
       )}
     </AnimatePresence>
-  );
-};
+  )
+}

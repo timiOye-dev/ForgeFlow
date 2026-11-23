@@ -108,7 +108,6 @@ If any instruction is unclear or multiple implementation approaches are possible
 
 ---
 
-
 # Project Documentation
 
 Before beginning a ticket:
@@ -119,7 +118,6 @@ Before beginning a ticket:
 4. Generate a completion report for user review.
 
 ---
-
 
 # Development Workflow
 

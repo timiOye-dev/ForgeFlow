@@ -84,26 +84,26 @@ L — Large
 
 ForgeFlow tracks every task using the following workflow:
 
-| Status | Meaning |
-|----------|---------|
-| ⬜ Backlog | Task has been identified but is not yet ready to begin. |
-| 🟡 Ready | Task has been planned and is ready for implementation. |
-| 🔵 In Progress | Development is currently underway. |
-| 🟣 Review | Implementation is complete and awaiting review or testing. |
-| 🟢 Done | Task has passed review, meets the Definition of Done, and has been committed. |
+| Status         | Meaning                                                                       |
+| -------------- | ----------------------------------------------------------------------------- |
+| ⬜ Backlog     | Task has been identified but is not yet ready to begin.                       |
+| 🟡 Ready       | Task has been planned and is ready for implementation.                        |
+| 🔵 In Progress | Development is currently underway.                                            |
+| 🟣 Review      | Implementation is complete and awaiting review or testing.                    |
+| 🟢 Done        | Task has passed review, meets the Definition of Done, and has been committed. |
 
 ---
 
 # Current Sprint Progress
 
-| ID | Task | Priority | Complexity | Status |
-|----|------|----------|------------|--------|
-| FF-001 | Initialize React Project | P0 | S | 🟢 Done |
-| FF-002 | Configure Tailwind CSS | P0 | S | 🟢 Verified Complete |
-| FF-003 | Configure shadcn/ui | P0 | S | 🟢 Done |
-| FF-004 | Configure React Router | P0 | S | 🟢 Done |
-| FF-005 | Create Feature-First Folder Structure | P0 | S | 🟢 Done |
-| FF-006 | Configure ESLint & Prettier | P1 | S | 🟢 Done |
+| ID     | Task                                  | Priority | Complexity | Status               |
+| ------ | ------------------------------------- | -------- | ---------- | -------------------- |
+| FF-001 | Initialize React Project              | P0       | S          | 🟢 Done              |
+| FF-002 | Configure Tailwind CSS                | P0       | S          | 🟢 Verified Complete |
+| FF-003 | Configure shadcn/ui                   | P0       | S          | 🟢 Done              |
+| FF-004 | Configure React Router                | P0       | S          | 🟢 Done              |
+| FF-005 | Create Feature-First Folder Structure | P0       | S          | 🟢 Done              |
+| FF-006 | Configure ESLint & Prettier           | P1       | S          | 🟢 Done              |
 
 > Update this table whenever a task changes status. This table should always reflect the current state of the project.
 
@@ -161,10 +161,10 @@ Complexity
 S
 
 Scope
+
 - Install and configure Tailwind CSS.
 - Verify styling works.
 - Do not modify routing, layouts, or folder structure.
-
 
 Definition of Done
 
@@ -178,16 +178,17 @@ Definition of Done
 
 FF-003
 
- Title
+Title
 Initialize shadcn/ui Design System
 
- Priority
+Priority
 P0
 
- Complexity
+Complexity
 S
 
- Scope
+Scope
+
 - Install and initialize shadcn/ui.
 - Configure the project for shadcn/ui components.
 - Verify compatibility with Tailwind CSS v4.
@@ -195,7 +196,8 @@ S
 - Confirm the component renders correctly.
 - Do not build application pages or layouts.
 
- Definition of Done
+Definition of Done
+
 - shadcn/ui initialized successfully.
 - Required configuration files generated.
 - Button component generated successfully.
@@ -203,9 +205,8 @@ S
 - Project builds and lints successfully.
 - No unrelated files modified.
 
- Depends On
+Depends On
 FF-002
-
 
 ---
 

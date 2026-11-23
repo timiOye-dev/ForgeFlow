@@ -1,11 +1,17 @@
-import { Activity, CheckCircle, Clock, FileText, FolderPlus } from 'lucide-react'
+import {
+  Activity,
+  CheckCircle,
+  Clock,
+  FileText,
+  FolderPlus,
+} from 'lucide-react'
 import { useActivities } from '../../../app/contexts/ActivityContext'
 
 const ACTIVITY_ICONS = {
   CheckCircle,
   Clock,
   FileText,
-  FolderPlus
+  FolderPlus,
 }
 
 export const RecentActivity = () => {
@@ -34,7 +40,9 @@ export const RecentActivity = () => {
                 <span className="text-slate-400">{a.action}</span>{' '}
                 <span className="font-medium text-slate-200">{a.target}</span>
               </p>
-              <span className="text-[10px] text-slate-500 shrink-0">{a.time}</span>
+              <span className="text-[10px] text-slate-500 shrink-0">
+                {a.time}
+              </span>
             </div>
           )
         })}

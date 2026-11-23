@@ -1,42 +1,47 @@
-import { useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  FolderKanban, 
-  CheckSquare, 
-  User, 
-  Plus, 
-  LogOut, 
-  Zap, 
+import { useEffect } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
+import {
+  LayoutDashboard,
+  FolderKanban,
+  CheckSquare,
+  User,
+  Plus,
+  LogOut,
+  Zap,
   ChevronRight,
-  X
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import { useAuth } from '../../app/contexts/AuthContext';
-import { useProjects } from '../../app/contexts/ProjectContext';
+  X,
+} from 'lucide-react'
+import { motion, AnimatePresence } from 'motion/react'
+import { useAuth } from '../../app/contexts/AuthContext'
+import { useProjects } from '../../app/contexts/ProjectContext'
 
 const SidebarContent = ({ onOpenCreateProject, onNavigate }) => {
-  const { user, logout } = useAuth();
-  const { projects } = useProjects();
-  const navigate = useNavigate();
+  const { user, logout } = useAuth()
+  const { projects } = useProjects()
+  const navigate = useNavigate()
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { label: 'Projects', path: '/projects', icon: FolderKanban, count: projects.length },
+    {
+      label: 'Projects',
+      path: '/projects',
+      icon: FolderKanban,
+      count: projects.length,
+    },
     { label: 'Tasks', path: '/tasks', icon: CheckSquare },
     { label: 'Account', path: '/account', icon: User },
-  ];
+  ]
 
-  const recentProjects = projects.slice(0, 4);
+  const recentProjects = projects.slice(0, 4)
 
   const handleNavigation = (path) => {
-    onNavigate?.(path);
-  };
+    onNavigate?.(path)
+  }
 
   const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+    logout()
+    navigate('/login')
+  }
 
   return (
     <>
@@ -47,8 +52,12 @@ const SidebarContent = ({ onOpenCreateProject, onNavigate }) => {
               <Zap className="w-5 h-5 fill-current" />
             </div>
             <div>
-              <span className="font-bold text-slate-100 tracking-tight text-base block leading-none">ForgeFlow</span>
-              <span className="text-[10px] uppercase font-semibold text-indigo-400 tracking-wider">Workspace</span>
+              <span className="font-bold text-slate-100 tracking-tight text-base block leading-none">
+                ForgeFlow
+              </span>
+              <span className="text-[10px] uppercase font-semibold text-indigo-400 tracking-wider">
+                Workspace
+              </span>
             </div>
           </div>
           <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
@@ -71,7 +80,7 @@ const SidebarContent = ({ onOpenCreateProject, onNavigate }) => {
             Menu
           </div>
           {navItems.map((item) => {
-            const Icon = item.icon;
+            const Icon = item.icon
             return (
               <NavLink
                 key={item.path}
@@ -95,7 +104,7 @@ const SidebarContent = ({ onOpenCreateProject, onNavigate }) => {
                   </span>
                 )}
               </NavLink>
-            );
+            )
           })}
         </nav>
 
@@ -104,7 +113,11 @@ const SidebarContent = ({ onOpenCreateProject, onNavigate }) => {
             <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
               Active Projects
             </span>
-            <NavLink to="/projects" onClick={() => handleNavigation('/projects')} className="text-xs text-indigo-400 hover:underline">
+            <NavLink
+              to="/projects"
+              onClick={() => handleNavigation('/projects')}
+              className="text-xs text-indigo-400 hover:underline"
+            >
               View all
             </NavLink>
           </div>
@@ -140,13 +153,20 @@ const SidebarContent = ({ onOpenCreateProject, onNavigate }) => {
         <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950/60 border border-slate-800">
           <div className="flex items-center gap-2.5 min-w-0">
             <img
-              src={user?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'}
+              src={
+                user?.avatar ||
+                'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
+              }
               alt={user?.name}
               className="w-8 h-8 rounded-full object-cover border border-slate-700 shrink-0"
             />
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-slate-200 truncate">{user?.name}</p>
-              <p className="text-[10px] text-slate-500 truncate">{user?.email}</p>
+              <p className="text-xs font-semibold text-slate-200 truncate">
+                {user?.name}
+              </p>
+              <p className="text-[10px] text-slate-500 truncate">
+                {user?.email}
+              </p>
             </div>
           </div>
           <button
@@ -159,25 +179,25 @@ const SidebarContent = ({ onOpenCreateProject, onNavigate }) => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
 export const Sidebar = ({ onOpenCreateProject, mobileOpen, onClose }) => {
   useEffect(() => {
-    if (!mobileOpen) return;
+    if (!mobileOpen) return
 
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose?.();
-    };
+      if (e.key === 'Escape') onClose?.()
+    }
 
-    document.addEventListener('keydown', handleKeyDown);
-    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown)
+    document.body.style.overflow = 'hidden'
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
-    };
-  }, [mobileOpen, onClose]);
+      document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = 'unset'
+    }
+  }, [mobileOpen, onClose])
 
   return (
     <>
@@ -216,12 +236,15 @@ export const Sidebar = ({ onOpenCreateProject, mobileOpen, onClose }) => {
                 </button>
               </div>
               <div className="flex-1 flex flex-col justify-between overflow-y-auto -mr-3 pr-3">
-                <SidebarContent onOpenCreateProject={onOpenCreateProject} onNavigate={onClose} />
+                <SidebarContent
+                  onOpenCreateProject={onOpenCreateProject}
+                  onNavigate={onClose}
+                />
               </div>
             </motion.aside>
           </div>
         )}
       </AnimatePresence>
     </>
-  );
-};
+  )
+}

@@ -1,4 +1,4 @@
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom'
 import {
   FolderKanban,
   CheckSquare,
@@ -7,32 +7,34 @@ import {
   CheckCircle2,
   Layers,
   ArrowUpRight,
-  Plus
-} from 'lucide-react';
-import { useAuth } from '../../app/contexts/AuthContext';
-import { useProjects } from '../../app/contexts/ProjectContext';
-import { useTasks } from '../../app/contexts/TaskContext';
-import { Badge } from '../../shared/components/Badge';
-import { EmptyState } from '../../shared/components/EmptyState';
-import { DashboardStats } from './components/DashboardStats';
-import { RecentActivity } from './components/RecentActivity';
-import { UpcomingDeadlines } from './components/UpcomingDeadlines';
-import { QuickActions } from './components/QuickActions';
+  Plus,
+} from 'lucide-react'
+import { useAuth } from '../../app/contexts/AuthContext'
+import { useProjects } from '../../app/contexts/ProjectContext'
+import { useTasks } from '../../app/contexts/TaskContext'
+import { Badge } from '../../shared/components/Badge'
+import { EmptyState } from '../../shared/components/EmptyState'
+import { DashboardStats } from './components/DashboardStats'
+import { RecentActivity } from './components/RecentActivity'
+import { UpcomingDeadlines } from './components/UpcomingDeadlines'
+import { QuickActions } from './components/QuickActions'
 
 export const DashboardPage = () => {
-  const { user } = useAuth();
-  const { projects } = useProjects();
-  const { tasks, toggleTaskStatus } = useTasks();
-  const navigate = useNavigate();
-  const { onOpenCreateProject } = useOutletContext() || {};
+  const { user } = useAuth()
+  const { projects } = useProjects()
+  const { tasks, toggleTaskStatus } = useTasks()
+  const navigate = useNavigate()
+  const { onOpenCreateProject } = useOutletContext() || {}
 
   // Metrics calculation
-  const activeProjects = projects.filter(p => p.status === 'In Progress' || p.status === 'In Review').length;
+  const activeProjects = projects.filter(
+    (p) => p.status === 'In Progress' || p.status === 'In Review'
+  ).length
 
-  const pendingTasks = tasks.filter(t => t.status !== 'Done').slice(0, 5);
-  const recentProjects = projects.slice(0, 3);
+  const pendingTasks = tasks.filter((t) => t.status !== 'Done').slice(0, 5)
+  const recentProjects = projects.slice(0, 3)
 
-  const isDashboardEmpty = projects.length === 0 && tasks.length === 0;
+  const isDashboardEmpty = projects.length === 0 && tasks.length === 0
 
   if (isDashboardEmpty) {
     return (
@@ -64,7 +66,7 @@ export const DashboardPage = () => {
           }
         />
       </div>
-    );
+    )
   }
 
   return (
@@ -79,7 +81,15 @@ export const DashboardPage = () => {
             Welcome back, {user?.name || 'Developer'}
           </h1>
           <p className="text-xs text-slate-400 mt-1 max-w-2xl leading-relaxed">
-            You have <span className="text-indigo-400 font-semibold">{activeProjects} active projects</span> and <span className="text-amber-400 font-semibold">{pendingTasks.length} pending tasks</span> requiring action this week.
+            You have{' '}
+            <span className="text-indigo-400 font-semibold">
+              {activeProjects} active projects
+            </span>{' '}
+            and{' '}
+            <span className="text-amber-400 font-semibold">
+              {pendingTasks.length} pending tasks
+            </span>{' '}
+            requiring action this week.
           </p>
         </div>
       </div>
@@ -110,8 +120,10 @@ export const DashboardPage = () => {
 
           <div className="space-y-3">
             {recentProjects.map((p) => {
-              const projectTasks = tasks.filter(t => t.projectId === p.id);
-              const doneTasksCount = projectTasks.filter(t => t.status === 'Done').length;
+              const projectTasks = tasks.filter((t) => t.projectId === p.id)
+              const doneTasksCount = projectTasks.filter(
+                (t) => t.status === 'Done'
+              ).length
 
               return (
                 <div
@@ -122,28 +134,34 @@ export const DashboardPage = () => {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">{p.client}</span>
+                        <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                          {p.client}
+                        </span>
                         <Badge variant={p.status}>{p.status}</Badge>
                       </div>
                       <h3 className="font-bold text-slate-100 group-hover:text-indigo-400 transition-colors text-sm">
                         {p.name}
                       </h3>
                     </div>
-                    <span className="text-xs font-semibold text-slate-200">{p.budget}</span>
+                    <span className="text-xs font-semibold text-slate-200">
+                      {p.budget}
+                    </span>
                   </div>
 
                   {/* Progress Bar */}
                   <div>
                     <div className="flex justify-between text-[11px] mb-1">
                       <span className="text-slate-400">Completion</span>
-                      <span className="font-semibold text-slate-300">{p.progress}%</span>
+                      <span className="font-semibold text-slate-300">
+                        {p.progress}%
+                      </span>
                     </div>
                     <div className="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden border border-slate-800">
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{
                           width: `${p.progress}%`,
-                          backgroundColor: p.color || '#3b82f6'
+                          backgroundColor: p.color || '#3b82f6',
                         }}
                       />
                     </div>
@@ -160,7 +178,7 @@ export const DashboardPage = () => {
                     </span>
                   </div>
                 </div>
-              );
+              )
             })}
           </div>
         </div>
@@ -184,7 +202,7 @@ export const DashboardPage = () => {
           <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
             {pendingTasks.length > 0 ? (
               pendingTasks.map((t) => {
-                const project = projects.find(p => p.id === t.projectId);
+                const project = projects.find((p) => p.id === t.projectId)
                 return (
                   <div
                     key={t.id}
@@ -198,7 +216,9 @@ export const DashboardPage = () => {
                         <CheckCircle2 className="w-4 h-4" />
                       </button>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-slate-200 line-clamp-1">{t.title}</h4>
+                        <h4 className="font-bold text-slate-200 line-clamp-1">
+                          {t.title}
+                        </h4>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-[10px] text-slate-500 flex items-center gap-1">
                             <Layers className="w-3 h-3" />
@@ -209,17 +229,21 @@ export const DashboardPage = () => {
                     </div>
 
                     <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-900">
-                      <Badge variant={t.priority} size="sm">{t.priority}</Badge>
+                      <Badge variant={t.priority} size="sm">
+                        {t.priority}
+                      </Badge>
                       <span className="flex items-center gap-1 text-amber-400">
                         <Clock className="w-3 h-3" />
                         Due {t.dueDate}
                       </span>
                     </div>
                   </div>
-                );
+                )
               })
             ) : (
-              <p className="text-xs text-slate-500 py-4 text-center">All caught up! No pending tasks.</p>
+              <p className="text-xs text-slate-500 py-4 text-center">
+                All caught up! No pending tasks.
+              </p>
             )}
           </div>
         </div>
@@ -231,5 +255,5 @@ export const DashboardPage = () => {
       {/* Upcoming Deadlines */}
       <UpcomingDeadlines />
     </div>
-  );
-};
+  )
+}

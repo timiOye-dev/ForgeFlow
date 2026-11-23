@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { User, Save, CheckCircle2, RefreshCw } from 'lucide-react';
-import { useAuth } from '../../app/contexts/AuthContext';
-import { INITIAL_PROJECTS, INITIAL_TASKS } from '../../mocks/initialData';
+import { useState } from 'react'
+import { User, Save, CheckCircle2, RefreshCw } from 'lucide-react'
+import { useAuth } from '../../app/contexts/AuthContext'
+import { INITIAL_PROJECTS, INITIAL_TASKS } from '../../mocks/initialData'
 
 export const AccountPage = () => {
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile } = useAuth()
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
     title: user?.title || '',
     bio: user?.bio || '',
-    avatar: user?.avatar || ''
-  });
+    avatar: user?.avatar || '',
+  })
 
-  const [savedSuccess, setSavedSuccess] = useState(false);
+  const [savedSuccess, setSavedSuccess] = useState(false)
   const [saveError, setSaveError] = useState('')
 
   const handleSubmit = async (e) => {
@@ -39,8 +39,15 @@ export const AccountPage = () => {
   }
 
   const handleResetData = () => {
-    if (window.confirm('Reset workspace data back to the initial demo state? Your account and profile settings will be preserved.')) {
-      localStorage.setItem('forgeflow_projects', JSON.stringify(INITIAL_PROJECTS))
+    if (
+      window.confirm(
+        'Reset workspace data back to the initial demo state? Your account and profile settings will be preserved.'
+      )
+    ) {
+      localStorage.setItem(
+        'forgeflow_projects',
+        JSON.stringify(INITIAL_PROJECTS)
+      )
       localStorage.setItem('forgeflow_tasks', JSON.stringify(INITIAL_TASKS))
       window.location.reload()
     }
@@ -75,21 +82,30 @@ export const AccountPage = () => {
       )}
 
       <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-6 shadow-sm">
-        <h2 className="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">Profile Information</h2>
+        <h2 className="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">
+          Profile Information
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div className="flex items-center gap-4">
             <img
-              src={formData.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'}
+              src={
+                formData.avatar ||
+                'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
+              }
               alt={formData.name}
               className="w-16 h-16 rounded-full object-cover border-2 border-indigo-500"
             />
             <div className="flex-1">
-              <label className="block font-medium text-slate-300 mb-1">Avatar Image URL</label>
+              <label className="block font-medium text-slate-300 mb-1">
+                Avatar Image URL
+              </label>
               <input
                 type="text"
                 value={formData.avatar}
-                onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, avatar: e.target.value })
+                }
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
               />
             </div>
@@ -97,34 +113,46 @@ export const AccountPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block font-medium text-slate-300 mb-1">Full Name</label>
+              <label className="block font-medium text-slate-300 mb-1">
+                Full Name
+              </label>
               <input
                 type="text"
                 required
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
               />
             </div>
 
             <div>
-              <label className="block font-medium text-slate-300 mb-1">Email Address</label>
+              <label className="block font-medium text-slate-300 mb-1">
+                Email Address
+              </label>
               <input
                 type="email"
                 required
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">Professional Title</label>
+            <label className="block font-medium text-slate-300 mb-1">
+              Professional Title
+            </label>
             <input
               type="text"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             />
           </div>
@@ -134,7 +162,9 @@ export const AccountPage = () => {
             <textarea
               rows={3}
               value={formData.bio}
-              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, bio: e.target.value })
+              }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500 resize-none"
             />
           </div>
@@ -150,12 +180,16 @@ export const AccountPage = () => {
       </div>
 
       <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm">
-        <h2 className="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">Workspace Data & Persistence</h2>
+        <h2 className="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">
+          Workspace Data & Persistence
+        </h2>
 
         <div className="flex items-center justify-between text-xs">
           <div>
             <h4 className="font-semibold text-slate-200">Reset Demo Data</h4>
-            <p className="text-slate-400 mt-0.5">Restore initial sample projects, tasks, and milestone records.</p>
+            <p className="text-slate-400 mt-0.5">
+              Restore initial sample projects, tasks, and milestone records.
+            </p>
           </div>
           <button
             onClick={handleResetData}
@@ -167,5 +201,5 @@ export const AccountPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

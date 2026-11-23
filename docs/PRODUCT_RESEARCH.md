@@ -248,15 +248,15 @@ Professional product design.
 
 # 5. Comparative Analysis
 
-| Product | Biggest Strength | Biggest Weakness | Borrow For ForgeFlow |
-|----------|------------------|------------------|----------------------|
-| Linear | Speed & simplicity | Limited flexibility | Overall UX |
-| Asana | Project organization | Complexity | Project management |
-| Trello | Ease of use | Scalability | Board interaction |
-| Monday.com | Dashboards | Too many options | Analytics & summaries |
-| GitHub | Search & status | Developer-centric | Navigation & badges |
-| Vercel | Visual polish | Limited PM features | UI aesthetics |
-| Stripe | Interface consistency | Not a PM tool | Forms & layouts |
+| Product    | Biggest Strength      | Biggest Weakness    | Borrow For ForgeFlow  |
+| ---------- | --------------------- | ------------------- | --------------------- |
+| Linear     | Speed & simplicity    | Limited flexibility | Overall UX            |
+| Asana      | Project organization  | Complexity          | Project management    |
+| Trello     | Ease of use           | Scalability         | Board interaction     |
+| Monday.com | Dashboards            | Too many options    | Analytics & summaries |
+| GitHub     | Search & status       | Developer-centric   | Navigation & badges   |
+| Vercel     | Visual polish         | Limited PM features | UI aesthetics         |
+| Stripe     | Interface consistency | Not a PM tool       | Forms & layouts       |
 
 ---
 
@@ -427,9 +427,9 @@ The result should be a focused project management application that demonstrates 
 
 # Revision History
 
-| Version | Date | Description |
-|----------|------|-------------|
-| 1.0 | July 2026 | Initial research document |
+| Version | Date      | Description               |
+| ------- | --------- | ------------------------- |
+| 1.0     | July 2026 | Initial research document |
 
 ---
 

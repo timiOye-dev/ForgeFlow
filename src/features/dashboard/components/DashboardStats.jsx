@@ -8,12 +8,20 @@ export const DashboardStats = () => {
   const { tasks } = useTasks()
 
   const totalProjects = projects.length
-  const activeProjects = projects.filter(p => p.status === 'In Progress' || p.status === 'In Review').length
+  const activeProjects = projects.filter(
+    (p) => p.status === 'In Progress' || p.status === 'In Review'
+  ).length
   const totalTasks = tasks.length
-  const completedTasks = tasks.filter(t => t.status === 'Done').length
+  const completedTasks = tasks.filter((t) => t.status === 'Done').length
 
-  const totalLoggedHours = tasks.reduce((sum, t) => sum + (t.loggedHours || 0), 0)
-  const totalEstimatedHours = tasks.reduce((sum, t) => sum + (t.estimatedHours || 0), 0)
+  const totalLoggedHours = tasks.reduce(
+    (sum, t) => sum + (t.loggedHours || 0),
+    0
+  )
+  const totalEstimatedHours = tasks.reduce(
+    (sum, t) => sum + (t.estimatedHours || 0),
+    0
+  )
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -40,7 +48,7 @@ export const DashboardStats = () => {
       />
       <StatCard
         title="Active Clients"
-        value={new Set(projects.map(p => p.client)).size}
+        value={new Set(projects.map((p) => p.client)).size}
         subtext="Client accounts managed"
         icon={DollarSign}
         color="purple"

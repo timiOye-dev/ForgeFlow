@@ -353,9 +353,9 @@ Every engineering decision should satisfy one or more of the following:
 
 # Revision History
 
-| Version | Date | Description |
-|----------|------|-------------|
-| 1.0 | July 2026 | Initial engineering standards |
+| Version | Date      | Description                   |
+| ------- | --------- | ----------------------------- |
+| 1.0     | July 2026 | Initial engineering standards |
 
 ---
 

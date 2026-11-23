@@ -1,18 +1,18 @@
-import { Routes, Route } from 'react-router-dom';
-import { RootLayout } from '../layouts/RootLayout';
-import { PublicLayout } from '../layouts/PublicLayout';
-import { AuthenticatedLayout } from '../layouts/AuthenticatedLayout';
+import { Routes, Route } from 'react-router-dom'
+import { RootLayout } from '../layouts/RootLayout'
+import { PublicLayout } from '../layouts/PublicLayout'
+import { AuthenticatedLayout } from '../layouts/AuthenticatedLayout'
 
-import { LandingPage } from '../../features/auth/LandingPage';
-import { LoginPage } from '../../features/auth/LoginPage';
-import { RegisterPage } from '../../features/auth/RegisterPage';
-import { ForgotPasswordPage } from '../../features/auth/ForgotPasswordPage';
+import { LandingPage } from '../../features/auth/LandingPage'
+import { LoginPage } from '../../features/auth/LoginPage'
+import { RegisterPage } from '../../features/auth/RegisterPage'
+import { ForgotPasswordPage } from '../../features/auth/ForgotPasswordPage'
 
-import { DashboardPage } from '../../features/dashboard/DashboardPage';
-import { ProjectListPage } from '../../features/projects/ProjectListPage';
-import { ProjectDetailPage } from '../../features/projects/ProjectDetailPage';
-import { TaskListPage } from '../../features/tasks/TaskListPage';
-import { AccountPage } from '../../features/account/AccountPage';
+import { DashboardPage } from '../../features/dashboard/DashboardPage'
+import { ProjectListPage } from '../../features/projects/ProjectListPage'
+import { ProjectDetailPage } from '../../features/projects/ProjectDetailPage'
+import { TaskListPage } from '../../features/tasks/TaskListPage'
+import { AccountPage } from '../../features/account/AccountPage'
 
 export const AppRouter = () => {
   return (
@@ -33,6 +33,5 @@ export const AppRouter = () => {
         </Route>
       </Route>
     </Routes>
-  );
-};
-
+  )
+}

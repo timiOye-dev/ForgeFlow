@@ -1,45 +1,46 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  FolderKanban, 
-  Search, 
-  Plus, 
-  Calendar, 
-  CheckSquare, 
-  DollarSign, 
-  Trash2, 
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+  FolderKanban,
+  Search,
+  Plus,
+  Calendar,
+  CheckSquare,
+  DollarSign,
+  Trash2,
   Layers,
-  Filter
-} from 'lucide-react';
-import { useProjects } from '../../app/contexts/ProjectContext';
-import { useTasks } from '../../app/contexts/TaskContext';
-import { Badge } from '../../shared/components/Badge';
-import { EmptyState } from '../../shared/components/EmptyState';
-import { CreateProjectModal } from './components/CreateProjectModal';
+  Filter,
+} from 'lucide-react'
+import { useProjects } from '../../app/contexts/ProjectContext'
+import { useTasks } from '../../app/contexts/TaskContext'
+import { Badge } from '../../shared/components/Badge'
+import { EmptyState } from '../../shared/components/EmptyState'
+import { CreateProjectModal } from './components/CreateProjectModal'
 
 export const ProjectListPage = () => {
-  const { projects, deleteProject } = useProjects();
-  const { tasks } = useTasks();
-  const navigate = useNavigate();
+  const { projects, deleteProject } = useProjects()
+  const { tasks } = useTasks()
+  const navigate = useNavigate()
 
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [priorityFilter, setPriorityFilter] = useState('All');
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('All')
+  const [priorityFilter, setPriorityFilter] = useState('All')
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
-  const filteredProjects = projects.filter(p => {
-    const matchesSearch = 
+  const filteredProjects = projects.filter((p) => {
+    const matchesSearch =
       p.name.toLowerCase().includes(search.toLowerCase()) ||
       p.client.toLowerCase().includes(search.toLowerCase()) ||
-      p.description.toLowerCase().includes(search.toLowerCase());
+      p.description.toLowerCase().includes(search.toLowerCase())
 
-    const matchesStatus = statusFilter === 'All' || p.status === statusFilter;
-    const matchesPriority = priorityFilter === 'All' || p.priority === priorityFilter;
+    const matchesStatus = statusFilter === 'All' || p.status === statusFilter
+    const matchesPriority =
+      priorityFilter === 'All' || p.priority === priorityFilter
 
-    return matchesSearch && matchesStatus && matchesPriority;
-  });
+    return matchesSearch && matchesStatus && matchesPriority
+  })
 
-  const statuses = ['All', 'In Progress', 'In Review', 'Planned', 'Completed'];
+  const statuses = ['All', 'In Progress', 'In Review', 'Planned', 'Completed']
 
   return (
     <div className="space-y-6">
@@ -77,7 +78,7 @@ export const ProjectListPage = () => {
           </div>
 
           <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 overflow-x-auto w-full md:w-auto">
-            {statuses.map(s => (
+            {statuses.map((s) => (
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
@@ -112,9 +113,12 @@ export const ProjectListPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filteredProjects.length > 0 ? (
           filteredProjects.map((p) => {
-            const projectTasks = tasks.filter(t => t.projectId === p.id);
-            const doneTasks = projectTasks.filter(t => t.status === 'Done').length;
-            const completedMilestones = p.milestones?.filter(m => m.completed).length || 0;
+            const projectTasks = tasks.filter((t) => t.projectId === p.id)
+            const doneTasks = projectTasks.filter(
+              (t) => t.status === 'Done'
+            ).length
+            const completedMilestones =
+              p.milestones?.filter((m) => m.completed).length || 0
 
             return (
               <div
@@ -123,7 +127,9 @@ export const ProjectListPage = () => {
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{p.client}</span>
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                      {p.client}
+                    </span>
                     <div className="flex items-center gap-1.5">
                       <Badge variant={p.status}>{p.status}</Badge>
                       <Badge variant={p.priority}>{p.priority}</Badge>
@@ -146,14 +152,16 @@ export const ProjectListPage = () => {
                   <div>
                     <div className="flex justify-between text-[11px] mb-1">
                       <span className="text-slate-400">Progress</span>
-                      <span className="font-semibold text-slate-200">{p.progress}%</span>
+                      <span className="font-semibold text-slate-200">
+                        {p.progress}%
+                      </span>
                     </div>
                     <div className="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden border border-slate-800">
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{
                           width: `${p.progress}%`,
-                          backgroundColor: p.color || '#3b82f6'
+                          backgroundColor: p.color || '#3b82f6',
                         }}
                       />
                     </div>
@@ -162,11 +170,16 @@ export const ProjectListPage = () => {
                   <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-400">
                     <div className="flex items-center gap-1.5">
                       <CheckSquare className="w-3.5 h-3.5 text-slate-500" />
-                      <span>{doneTasks}/{projectTasks.length} tasks</span>
+                      <span>
+                        {doneTasks}/{projectTasks.length} tasks
+                      </span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Layers className="w-3.5 h-3.5 text-slate-500" />
-                      <span>{completedMilestones}/{p.milestones?.length || 0} milestones</span>
+                      <span>
+                        {completedMilestones}/{p.milestones?.length || 0}{' '}
+                        milestones
+                      </span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 text-slate-500" />
@@ -174,7 +187,9 @@ export const ProjectListPage = () => {
                     </div>
                     <div className="flex items-center gap-1.5">
                       <DollarSign className="w-3.5 h-3.5 text-slate-500" />
-                      <span className="font-semibold text-slate-200">{p.budget}</span>
+                      <span className="font-semibold text-slate-200">
+                        {p.budget}
+                      </span>
                     </div>
                   </div>
 
@@ -187,8 +202,12 @@ export const ProjectListPage = () => {
                     </button>
                     <button
                       onClick={() => {
-                        if (window.confirm(`Are you sure you want to delete "${p.name}"?`)) {
-                          deleteProject(p.id);
+                        if (
+                          window.confirm(
+                            `Are you sure you want to delete "${p.name}"?`
+                          )
+                        ) {
+                          deleteProject(p.id)
                         }
                       }}
                       title="Delete project"
@@ -199,7 +218,7 @@ export const ProjectListPage = () => {
                   </div>
                 </div>
               </div>
-            );
+            )
           })
         ) : (
           <EmptyState
@@ -216,5 +235,5 @@ export const ProjectListPage = () => {
         onClose={() => setIsCreateModalOpen(false)}
       />
     </div>
-  );
-};
+  )
+}

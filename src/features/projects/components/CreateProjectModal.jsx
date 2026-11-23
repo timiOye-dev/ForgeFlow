@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { useProjects } from '../../../app/contexts/ProjectContext';
-import { Modal } from '../../../shared/components/Modal';
+import { useState } from 'react'
+import { useProjects } from '../../../app/contexts/ProjectContext'
+import { Modal } from '../../../shared/components/Modal'
 
 export const CreateProjectModal = ({ isOpen, onClose }) => {
-  const { addProject } = useProjects();
+  const { addProject } = useProjects()
 
   const [formData, setFormData] = useState({
     name: '',
@@ -14,20 +14,30 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
     priority: 'Medium',
     budget: '$5,000',
     deadline: '',
-    color: '#6366f1'
-  });
+    color: '#6366f1',
+  })
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.name.trim()) return;
+    e.preventDefault()
+    if (!formData.name.trim()) return
 
     addProject({
       ...formData,
       milestones: [
-        { id: `m_init_1`, title: 'Discovery & Requirements Signoff', completed: true, dueDate: formData.deadline },
-        { id: `m_init_2`, title: 'Core Implementation & QA Testing', completed: false, dueDate: formData.deadline },
-      ]
-    });
+        {
+          id: `m_init_1`,
+          title: 'Discovery & Requirements Signoff',
+          completed: true,
+          dueDate: formData.deadline,
+        },
+        {
+          id: `m_init_2`,
+          title: 'Core Implementation & QA Testing',
+          completed: false,
+          dueDate: formData.deadline,
+        },
+      ],
+    })
 
     setFormData({
       name: '',
@@ -38,17 +48,19 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
       priority: 'Medium',
       budget: '$5,000',
       deadline: '',
-      color: '#6366f1'
-    });
+      color: '#6366f1',
+    })
 
-    onClose();
-  };
+    onClose()
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Create New Project">
       <form onSubmit={handleSubmit} className="space-y-4 text-xs">
         <div>
-          <label className="block font-medium text-slate-300 mb-1">Project Name *</label>
+          <label className="block font-medium text-slate-300 mb-1">
+            Project Name *
+          </label>
           <input
             type="text"
             required
@@ -61,21 +73,29 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block font-medium text-slate-300 mb-1">Client / Company</label>
+            <label className="block font-medium text-slate-300 mb-1">
+              Client / Company
+            </label>
             <input
               type="text"
               placeholder="e.g. Acme Corp"
               value={formData.client}
-              onChange={(e) => setFormData({ ...formData, client: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, client: e.target.value })
+              }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
             />
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">Category</label>
+            <label className="block font-medium text-slate-300 mb-1">
+              Category
+            </label>
             <select
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, category: e.target.value })
+              }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             >
               <option value="Web Application">Web Application</option>
@@ -88,22 +108,30 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
         </div>
 
         <div>
-          <label className="block font-medium text-slate-300 mb-1">Description</label>
+          <label className="block font-medium text-slate-300 mb-1">
+            Description
+          </label>
           <textarea
             rows={3}
             placeholder="Brief overview of project scope and key deliverables..."
             value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
             className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
           />
         </div>
 
         <div className="grid grid-cols-3 gap-3">
           <div>
-            <label className="block font-medium text-slate-300 mb-1">Status</label>
+            <label className="block font-medium text-slate-300 mb-1">
+              Status
+            </label>
             <select
               value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, status: e.target.value })
+              }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             >
               <option value="Planned">Planned</option>
@@ -114,10 +142,14 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">Priority</label>
+            <label className="block font-medium text-slate-300 mb-1">
+              Priority
+            </label>
             <select
               value={formData.priority}
-              onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, priority: e.target.value })
+              }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             >
               <option value="High">High</option>
@@ -127,11 +159,15 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">Budget</label>
+            <label className="block font-medium text-slate-300 mb-1">
+              Budget
+            </label>
             <input
               type="text"
               value={formData.budget}
-              onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, budget: e.target.value })
+              }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             />
           </div>
@@ -139,21 +175,29 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block font-medium text-slate-300 mb-1">Deadline Date</label>
+            <label className="block font-medium text-slate-300 mb-1">
+              Deadline Date
+            </label>
             <input
               type="date"
               value={formData.deadline}
-              onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, deadline: e.target.value })
+              }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             />
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">Color Badge</label>
+            <label className="block font-medium text-slate-300 mb-1">
+              Color Badge
+            </label>
             <input
               type="color"
               value={formData.color}
-              onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, color: e.target.value })
+              }
               className="w-full h-9 bg-slate-950 border border-slate-800 rounded-lg px-1 py-1 cursor-pointer"
             />
           </div>
@@ -176,5 +220,5 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
         </div>
       </form>
     </Modal>
-  );
-};
+  )
+}

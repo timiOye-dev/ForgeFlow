@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { Sidebar } from '../../shared/components/Sidebar';
-import { TopNav } from '../../shared/components/TopNav';
-import { CreateProjectModal } from '../../features/projects/components/CreateProjectModal';
-import { CreateTaskModal } from '../../features/tasks/components/CreateTaskModal';
+import { useState } from 'react'
+import { Outlet, Navigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
+import { Sidebar } from '../../shared/components/Sidebar'
+import { TopNav } from '../../shared/components/TopNav'
+import { CreateProjectModal } from '../../features/projects/components/CreateProjectModal'
+import { CreateTaskModal } from '../../features/tasks/components/CreateTaskModal'
 
 export const AuthenticatedLayout = () => {
-  const { isAuthenticated } = useAuth();
-  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { isAuthenticated } = useAuth()
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false)
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace />
   }
 
   return (
@@ -31,7 +31,12 @@ export const AuthenticatedLayout = () => {
           onToggleSidebar={() => setIsSidebarOpen(true)}
         />
         <main className="flex-1 p-4 md:p-6 overflow-y-auto">
-          <Outlet context={{ onOpenCreateProject: () => setIsProjectModalOpen(true), onOpenCreateTask: () => setIsTaskModalOpen(true) }} />
+          <Outlet
+            context={{
+              onOpenCreateProject: () => setIsProjectModalOpen(true),
+              onOpenCreateTask: () => setIsTaskModalOpen(true),
+            }}
+          />
         </main>
       </div>
 
@@ -44,5 +49,5 @@ export const AuthenticatedLayout = () => {
         onClose={() => setIsTaskModalOpen(false)}
       />
     </div>
-  );
-};
+  )
+}

@@ -102,26 +102,26 @@ Tasks remain an independent feature because multiple areas of the application de
 src/
 │
 ├── app/
-│   ├── layouts/
-│   ├── providers/
-│   ├── router/
-│   └── contexts/
+│ ├── layouts/
+│ ├── providers/
+│ ├── router/
+│ └── contexts/
 │
 ├── features/
-│   ├── auth/
-│   ├── dashboard/
-│   ├── projects/
-│   ├── tasks/
-│   └── account/
+│ ├── auth/
+│ ├── dashboard/
+│ ├── projects/
+│ ├── tasks/
+│ └── account/
 │
 ├── shared/
-│   ├── components/
-│   ├── hooks/
-│   ├── services/
-│   ├── utils/
-│   ├── constants/
-│   ├── icons/
-│   └── assets/
+│ ├── components/
+│ ├── hooks/
+│ ├── services/
+│ ├── utils/
+│ ├── constants/
+│ ├── icons/
+│ └── assets/
 │
 ├── mocks/
 │
@@ -318,9 +318,9 @@ Business logic stays outside presentation components.
 
 # Revision History
 
-| Version | Date | Description |
-|---------|------|-------------|
-|1.0|July 2026|Initial architecture|
+| Version | Date      | Description          |
+| ------- | --------- | -------------------- |
+| 1.0     | July 2026 | Initial architecture |
 
 ---
 

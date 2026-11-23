@@ -16,7 +16,8 @@ const getDueStatus = (dateStr) => {
 }
 
 const getTypeStyles = (type) => {
-  if (type === 'project') return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+  if (type === 'project')
+    return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
   return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
 }
 
@@ -35,27 +36,28 @@ export const UpcomingDeadlines = () => {
   const { projects } = useProjects()
   const { tasks } = useTasks()
 
-  const isValidDate = (value) => value && !Number.isNaN(new Date(`${value}T00:00:00`).getTime())
+  const isValidDate = (value) =>
+    value && !Number.isNaN(new Date(`${value}T00:00:00`).getTime())
 
   const deadlineItems = [
     ...projects
-      .filter(p => isValidDate(p.deadline))
-      .map(p => ({
+      .filter((p) => isValidDate(p.deadline))
+      .map((p) => ({
         key: `p:${p.id}`,
         type: 'project',
         title: p.name,
         meta: p.client,
-        date: p.deadline
+        date: p.deadline,
       })),
     ...tasks
-      .filter(t => isValidDate(t.dueDate))
-      .map(t => ({
+      .filter((t) => isValidDate(t.dueDate))
+      .map((t) => ({
         key: `t:${t.id}`,
         type: 'task',
         title: t.title,
-        meta: projects.find(p => p.id === t.projectId)?.name || 'General',
-        date: t.dueDate
-      }))
+        meta: projects.find((p) => p.id === t.projectId)?.name || 'General',
+        date: t.dueDate,
+      })),
   ]
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 5)
@@ -70,26 +72,37 @@ export const UpcomingDeadlines = () => {
       {deadlineItems.length > 0 ? (
         <div className="space-y-2">
           {deadlineItems.map((item) => {
-            const TypeIcon = item.type === 'project' ? FolderKanban : CheckSquare
+            const TypeIcon =
+              item.type === 'project' ? FolderKanban : CheckSquare
             const status = getDueStatus(item.date)
             return (
               <div
                 key={item.key}
                 className="flex items-start gap-3 p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs"
               >
-                <div className={`p-2 rounded-lg border shrink-0 ${getTypeStyles(item.type)}`}>
+                <div
+                  className={`p-2 rounded-lg border shrink-0 ${getTypeStyles(item.type)}`}
+                >
                   <TypeIcon className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-medium text-slate-100 truncate">{item.title}</p>
-                    <span className={`shrink-0 inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${getStatusStyles(status.tone)}`}>
+                    <p className="font-medium text-slate-100 truncate">
+                      {item.title}
+                    </p>
+                    <span
+                      className={`shrink-0 inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${getStatusStyles(status.tone)}`}
+                    >
                       {status.label}
                     </span>
                   </div>
                   <div className="flex items-center justify-between gap-2 mt-1">
-                    <span className="text-[10px] text-slate-500 truncate">{item.meta}</span>
-                    <span className="text-[10px] text-slate-500 shrink-0">Due {item.date}</span>
+                    <span className="text-[10px] text-slate-500 truncate">
+                      {item.meta}
+                    </span>
+                    <span className="text-[10px] text-slate-500 shrink-0">
+                      Due {item.date}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -97,7 +110,9 @@ export const UpcomingDeadlines = () => {
           })}
         </div>
       ) : (
-        <p className="text-xs text-slate-500 py-4 text-center">All caught up! No upcoming deadlines.</p>
+        <p className="text-xs text-slate-500 py-4 text-center">
+          All caught up! No upcoming deadlines.
+        </p>
       )}
     </div>
   )

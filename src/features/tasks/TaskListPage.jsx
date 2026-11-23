@@ -1,42 +1,44 @@
-import { useState } from 'react';
-import { 
-  CheckSquare, 
-  Search, 
-  Plus, 
-  CheckCircle2, 
-  Clock, 
-  Trash2, 
-  Folder 
-} from 'lucide-react';
-import { useTasks } from '../../app/contexts/TaskContext';
-import { useProjects } from '../../app/contexts/ProjectContext';
-import { Badge } from '../../shared/components/Badge';
-import { EmptyState } from '../../shared/components/EmptyState';
-import { CreateTaskModal } from './components/CreateTaskModal';
+import { useState } from 'react'
+import {
+  CheckSquare,
+  Search,
+  Plus,
+  CheckCircle2,
+  Clock,
+  Trash2,
+  Folder,
+} from 'lucide-react'
+import { useTasks } from '../../app/contexts/TaskContext'
+import { useProjects } from '../../app/contexts/ProjectContext'
+import { Badge } from '../../shared/components/Badge'
+import { EmptyState } from '../../shared/components/EmptyState'
+import { CreateTaskModal } from './components/CreateTaskModal'
 
 export const TaskListPage = () => {
-  const { tasks, toggleTaskStatus, deleteTask } = useTasks();
-  const { projects } = useProjects();
+  const { tasks, toggleTaskStatus, deleteTask } = useTasks()
+  const { projects } = useProjects()
 
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [priorityFilter, setPriorityFilter] = useState('All');
-  const [projectFilter, setProjectFilter] = useState('All');
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('All')
+  const [priorityFilter, setPriorityFilter] = useState('All')
+  const [projectFilter, setProjectFilter] = useState('All')
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
-  const filteredTasks = tasks.filter(t => {
-    const matchesSearch = 
+  const filteredTasks = tasks.filter((t) => {
+    const matchesSearch =
       t.title.toLowerCase().includes(search.toLowerCase()) ||
-      t.description.toLowerCase().includes(search.toLowerCase());
+      t.description.toLowerCase().includes(search.toLowerCase())
 
-    const matchesStatus = statusFilter === 'All' || t.status === statusFilter;
-    const matchesPriority = priorityFilter === 'All' || t.priority === priorityFilter;
-    const matchesProject = projectFilter === 'All' || t.projectId === projectFilter;
+    const matchesStatus = statusFilter === 'All' || t.status === statusFilter
+    const matchesPriority =
+      priorityFilter === 'All' || t.priority === priorityFilter
+    const matchesProject =
+      projectFilter === 'All' || t.projectId === projectFilter
 
-    return matchesSearch && matchesStatus && matchesPriority && matchesProject;
-  });
+    return matchesSearch && matchesStatus && matchesPriority && matchesProject
+  })
 
-  const statuses = ['All', 'Todo', 'In Progress', 'In Review', 'Done'];
+  const statuses = ['All', 'Todo', 'In Progress', 'In Review', 'Done']
 
   return (
     <div className="space-y-6">
@@ -74,7 +76,7 @@ export const TaskListPage = () => {
           </div>
 
           <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 overflow-x-auto w-full md:w-auto">
-            {statuses.map(s => (
+            {statuses.map((s) => (
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
@@ -96,8 +98,10 @@ export const TaskListPage = () => {
               className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-slate-200 focus:outline-none focus:border-indigo-500"
             >
               <option value="All">All Projects</option>
-              {projects.map(p => (
-                <option key={p.id} value={p.id}>{p.name}</option>
+              {projects.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
               ))}
             </select>
 
@@ -118,7 +122,7 @@ export const TaskListPage = () => {
       <div className="space-y-3">
         {filteredTasks.length > 0 ? (
           filteredTasks.map((t) => {
-            const project = projects.find(p => p.id === t.projectId);
+            const project = projects.find((p) => p.id === t.projectId)
 
             return (
               <div
@@ -146,7 +150,9 @@ export const TaskListPage = () => {
                       </span>
                     </div>
 
-                    <h3 className={`font-bold text-sm ${t.status === 'Done' ? 'line-through text-slate-500' : 'text-slate-100'}`}>
+                    <h3
+                      className={`font-bold text-sm ${t.status === 'Done' ? 'line-through text-slate-500' : 'text-slate-100'}`}
+                    >
                       {t.title}
                     </h3>
 
@@ -165,15 +171,19 @@ export const TaskListPage = () => {
                   <div className="text-right text-[11px] text-slate-400">
                     <div className="flex items-center gap-1 font-medium text-slate-300">
                       <Clock className="w-3 h-3 text-amber-400" />
-                      <span>{t.loggedHours}h / {t.estimatedHours}h</span>
+                      <span>
+                        {t.loggedHours}h / {t.estimatedHours}h
+                      </span>
                     </div>
-                    <span className="text-slate-500 text-[10px]">Due {t.dueDate}</span>
+                    <span className="text-slate-500 text-[10px]">
+                      Due {t.dueDate}
+                    </span>
                   </div>
 
                   <button
                     onClick={() => {
                       if (window.confirm(`Delete task "${t.title}"?`)) {
-                        deleteTask(t.id);
+                        deleteTask(t.id)
                       }
                     }}
                     className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors"
@@ -182,7 +192,7 @@ export const TaskListPage = () => {
                   </button>
                 </div>
               </div>
-            );
+            )
           })
         ) : (
           <EmptyState
@@ -198,5 +208,5 @@ export const TaskListPage = () => {
         onClose={() => setIsCreateModalOpen(false)}
       />
     </div>
-  );
-};
+  )
+}

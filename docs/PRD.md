@@ -354,11 +354,12 @@ These risks will be managed through iterative development and clear engineering 
 
 # 16. Revision History
 
-| Version | Date | Description |
-|----------|------|-------------|
-| 1.0 | July 2026 | Initial PRD created |
+| Version | Date      | Description         |
+| ------- | --------- | ------------------- |
+| 1.0     | July 2026 | Initial PRD created |
 
 ---
+
 # 17. Guiding Statement
 
 ForgeFlow is not intended to compete with established project management platforms. Its primary purpose is to serve as a production-quality learning project that demonstrates professional frontend engineering practices while remaining extensible enough to evolve into a full-stack application.
