@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useRef } from 'react'
 import { INITIAL_PROJECTS } from '../../mocks/initialData'
+import { applyProjectUpdate } from '../../shared/utils/projectForm'
 
 const ProjectContext = createContext(null)
 
@@ -14,6 +15,20 @@ export const ProjectProvider = ({ children }) => {
       return INITIAL_PROJECTS
     }
   })
+
+  const projectsRef = useRef(projects)
+
+  const commitProjects = (nextOrUpdater) => {
+    const nextProjects =
+      typeof nextOrUpdater === 'function'
+        ? nextOrUpdater(projectsRef.current)
+        : nextOrUpdater
+
+    projectsRef.current = nextProjects
+    setProjects(nextProjects)
+
+    return nextProjects
+  }
 
   useEffect(() => {
     localStorage.setItem('forgeflow_projects', JSON.stringify(projects))
@@ -39,26 +54,31 @@ export const ProjectProvider = ({ children }) => {
       files: [],
       createdAt: new Date().toISOString().split('T')[0],
     }
-    setProjects((prev) => [newProject, ...prev])
+    commitProjects((prev) => [newProject, ...prev])
     return newProject
   }
 
   const updateProject = (id, updatedFields) => {
-    setProjects((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, ...updatedFields } : p))
-    )
+    let result
+
+    commitProjects((currentProjects) => {
+      result = applyProjectUpdate(currentProjects, id, updatedFields)
+      return result.success ? result.projects : currentProjects
+    })
+
+    return result
   }
 
   const deleteProject = (id) => {
-    setProjects((prev) => prev.filter((p) => p.id !== id))
+    commitProjects((prev) => prev.filter((p) => p.id !== id))
   }
 
   const getProjectById = (id) => {
-    return projects.find((p) => p.id === id)
+    return projectsRef.current.find((p) => p.id === id)
   }
 
   const addMilestone = (projectId, milestoneTitle, dueDate) => {
-    setProjects((prev) =>
+    commitProjects((prev) =>
       prev.map((p) => {
         if (p.id !== projectId) return p
         const newM = {
@@ -86,7 +106,7 @@ export const ProjectProvider = ({ children }) => {
   }
 
   const toggleMilestone = (projectId, milestoneId) => {
-    setProjects((prev) =>
+    commitProjects((prev) =>
       prev.map((p) => {
         if (p.id !== projectId) return p
         const updatedMilestones = p.milestones.map((m) =>
@@ -116,7 +136,7 @@ export const ProjectProvider = ({ children }) => {
   }
 
   const addNote = (projectId, title, content) => {
-    setProjects((prev) =>
+    commitProjects((prev) =>
       prev.map((p) => {
         if (p.id !== projectId) return p
         const newNote = {
@@ -131,7 +151,7 @@ export const ProjectProvider = ({ children }) => {
   }
 
   const deleteNote = (projectId, noteId) => {
-    setProjects((prev) =>
+    commitProjects((prev) =>
       prev.map((p) => {
         if (p.id !== projectId) return p
         return { ...p, notes: p.notes.filter((n) => n.id !== noteId) }
@@ -140,7 +160,7 @@ export const ProjectProvider = ({ children }) => {
   }
 
   const addFile = (projectId, file) => {
-    setProjects((prev) =>
+    commitProjects((prev) =>
       prev.map((p) => {
         if (p.id !== projectId) return p
         const newFile = {
@@ -155,7 +175,7 @@ export const ProjectProvider = ({ children }) => {
   }
 
   const deleteFile = (projectId, fileId) => {
-    setProjects((prev) =>
+    commitProjects((prev) =>
       prev.map((p) => {
         if (p.id !== projectId) return p
         return { ...p, files: p.files.filter((f) => f.id !== fileId) }

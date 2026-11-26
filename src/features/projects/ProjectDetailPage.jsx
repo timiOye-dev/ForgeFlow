@@ -13,12 +13,14 @@ import {
   Trash2,
   CheckCircle2,
   Upload,
+  Pencil,
 } from 'lucide-react'
 import { useProjects } from '../../app/contexts/ProjectContext'
 import { useTasks } from '../../app/contexts/TaskContext'
 import { Badge } from '../../shared/components/Badge'
 import { EmptyState } from '../../shared/components/EmptyState'
 import { CreateTaskModal } from '../tasks/components/CreateTaskModal'
+import { EditProjectModal } from './components/EditProjectModal'
 
 export const ProjectDetailPage = () => {
   const { projectId } = useParams()
@@ -39,6 +41,8 @@ export const ProjectDetailPage = () => {
 
   const [activeTab, setActiveTab] = useState('overview')
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
+  const [isEditProjectModalOpen, setIsEditProjectModalOpen] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
 
   const [newMilestoneTitle, setNewMilestoneTitle] = useState('')
   const [newMilestoneDueDate, setNewMilestoneDueDate] = useState('')
@@ -62,6 +66,10 @@ export const ProjectDetailPage = () => {
         }
       />
     )
+  }
+
+  const handleProjectUpdated = (updatedProject) => {
+    setSuccessMessage(`Project "${updatedProject.name}" updated successfully.`)
   }
 
   const handleAddMilestoneSubmit = (e) => {
@@ -122,6 +130,16 @@ export const ProjectDetailPage = () => {
         </span>
       </div>
 
+      {successMessage && (
+        <div
+          role="status"
+          className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2"
+        >
+          <CheckCircle2 className="w-4 h-4" />
+          <span>{successMessage}</span>
+        </div>
+      )}
+
       <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -145,6 +163,16 @@ export const ProjectDetailPage = () => {
           <div className="flex items-center gap-2 shrink-0">
             <Badge variant={project.status}>{project.status}</Badge>
             <Badge variant={project.priority}>{project.priority}</Badge>
+            <button
+              onClick={() => {
+                setSuccessMessage('')
+                setIsEditProjectModalOpen(true)
+              }}
+              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs transition-colors flex items-center gap-1.5"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+              <span>Edit Project</span>
+            </button>
           </div>
         </div>
 
@@ -533,6 +561,14 @@ export const ProjectDetailPage = () => {
         isOpen={isTaskModalOpen}
         onClose={() => setIsTaskModalOpen(false)}
         defaultProjectId={project.id}
+      />
+
+      <EditProjectModal
+        key={project.id}
+        isOpen={isEditProjectModalOpen}
+        onClose={() => setIsEditProjectModalOpen(false)}
+        project={project}
+        onSuccess={handleProjectUpdated}
       />
     </div>
   )

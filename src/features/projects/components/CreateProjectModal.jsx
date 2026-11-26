@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import { useProjects } from '../../../app/contexts/ProjectContext'
 import { Modal } from '../../../shared/components/Modal'
+import {
+  PROJECT_CATEGORIES,
+  PROJECT_PRIORITIES,
+  PROJECT_STATUSES,
+} from '../../../shared/utils/projectForm'
 
 export const CreateProjectModal = ({ isOpen, onClose }) => {
   const { addProject } = useProjects()
@@ -98,11 +103,11 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
               }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             >
-              <option value="Web Application">Web Application</option>
-              <option value="Mobile App">Mobile App</option>
-              <option value="Brand Identity">Brand Identity</option>
-              <option value="API Integration">API Integration</option>
-              <option value="Design System">Design System</option>
+              {PROJECT_CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -134,10 +139,11 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
               }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             >
-              <option value="Planned">Planned</option>
-              <option value="In Progress">In Progress</option>
-              <option value="In Review">In Review</option>
-              <option value="Completed">Completed</option>
+              {PROJECT_STATUSES.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -152,9 +158,11 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
               }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             >
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
+              {PROJECT_PRIORITIES.map((priority) => (
+                <option key={priority} value={priority}>
+                  {priority}
+                </option>
+              ))}
             </select>
           </div>
 
