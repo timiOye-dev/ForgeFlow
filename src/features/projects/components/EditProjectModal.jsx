@@ -3,9 +3,9 @@ import { Save } from 'lucide-react'
 import { useProjects } from '../../../app/contexts/ProjectContext'
 import { Modal } from '../../../shared/components/Modal'
 import {
-  PROJECT_CATEGORIES,
   PROJECT_PRIORITIES,
   PROJECT_STATUSES,
+  getProjectCategoryOptions,
   getProjectFormValues,
   normalizeProjectForm,
   validateProjectForm,
@@ -17,6 +17,7 @@ export const EditProjectModal = ({ isOpen, onClose, project, onSuccess }) => {
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const wasOpen = useRef(isOpen)
+  const categoryOptions = getProjectCategoryOptions(project)
 
   useLayoutEffect(() => {
     if (isOpen && !wasOpen.current) {
@@ -35,7 +36,9 @@ export const EditProjectModal = ({ isOpen, onClose, project, onSuccess }) => {
     event.preventDefault()
     if (isSubmitting) return
 
-    const validation = validateProjectForm(formData)
+    const validation = validateProjectForm(formData, {
+      originalCategory: project?.category,
+    })
     if (!validation.success) {
       setError(Object.values(validation.errors)[0])
       return
@@ -111,7 +114,7 @@ export const EditProjectModal = ({ isOpen, onClose, project, onSuccess }) => {
               onChange={handleChange('category')}
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             >
-              {PROJECT_CATEGORIES.map((category) => (
+              {categoryOptions.map((category) => (
                 <option key={category} value={category}>
                   {category}
                 </option>

@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
+import { INITIAL_PROJECTS } from '../../mocks/initialData.js'
 import {
   PROJECT_CATEGORIES,
   PROJECT_PRIORITIES,
   PROJECT_STATUSES,
   applyProjectUpdate,
+  getProjectCategoryOptions,
   getProjectFormValues,
   normalizeProjectForm,
   validateProjectForm,
@@ -325,4 +327,129 @@ test('sequential project updates accumulate without stale data', () => {
   assert.equal(third.projects[0].name, 'First Update')
   assert.equal(third.projects[0].status, 'In Review')
   assert.equal(third.projects[1].client, 'Second Client')
+})
+
+test('getProjectFormValues preserves every seeded project category', () => {
+  const seededCategories = new Set()
+
+  for (const project of INITIAL_PROJECTS) {
+    const values = getProjectFormValues(project)
+
+    assert.equal(values.category, project.category)
+    seededCategories.add(project.category)
+  }
+
+  for (const category of [
+    'Mobile App',
+    'Web Application',
+    'Branding',
+    'Developer Tools',
+  ]) {
+    assert.ok(
+      seededCategories.has(category),
+      `missing seeded category ${category}`
+    )
+  }
+})
+
+test('getProjectCategoryOptions adds an unsupported stored category for editing only', () => {
+  const legacyOptions = getProjectCategoryOptions({ category: 'Branding' })
+
+  assert.deepEqual(legacyOptions, ['Branding', ...PROJECT_CATEGORIES])
+  assert.strictEqual(
+    getProjectCategoryOptions({ category: 'Web Application' }),
+    PROJECT_CATEGORIES
+  )
+  assert.deepEqual(PROJECT_CATEGORIES, [
+    'Web Application',
+    'Mobile App',
+    'Brand Identity',
+    'API Integration',
+    'Design System',
+  ])
+})
+
+test('category validation distinguishes unchanged legacy values from new invalid values', () => {
+  const legacyForm = validForm({ category: 'Branding' })
+
+  assert.equal(
+    validateProjectForm(legacyForm).errors.category,
+    'Select a valid project category.'
+  )
+  assert.equal(
+    validateProjectForm(legacyForm, { originalCategory: 'Branding' }).success,
+    true
+  )
+  assert.equal(
+    validateProjectForm(legacyForm, {
+      originalCategory: 'Developer Tools',
+    }).errors.category,
+    'Select a valid project category.'
+  )
+  assert.equal(
+    validateProjectForm(validForm({ category: 'Design System' }), {
+      originalCategory: 'Branding',
+    }).success,
+    true
+  )
+})
+
+test('applyProjectUpdate preserves seeded categories when an unrelated field changes', () => {
+  for (const seedProject of INITIAL_PROJECTS) {
+    const projects = clone(INITIAL_PROJECTS)
+    const storedProject = projects.find((p) => p.id === seedProject.id)
+    const result = applyProjectUpdate(projects, seedProject.id, {
+      name: `${seedProject.name} Updated`,
+    })
+
+    assert.equal(result.success, true, `failed to update ${seedProject.id}`)
+    assert.equal(result.project.category, seedProject.category)
+    assert.equal(result.project.id, seedProject.id)
+    assert.equal(result.project.createdAt, seedProject.createdAt)
+    assert.strictEqual(result.project.milestones, storedProject.milestones)
+    assert.strictEqual(result.project.notes, storedProject.notes)
+    assert.strictEqual(result.project.files, storedProject.files)
+  }
+})
+
+test('applyProjectUpdate rejects an unsupported replacement category', () => {
+  const projects = [makeProject({ id: 'proj_legacy', category: 'Branding' })]
+  const original = clone(projects)
+
+  const result = applyProjectUpdate(projects, 'proj_legacy', {
+    category: 'Unknown',
+  })
+
+  assert.equal(result.success, false)
+  assert.equal(result.error.code, 'VALIDATION_ERROR')
+  assert.equal(result.error.errors.category, 'Select a valid project category.')
+  assert.deepEqual(projects, original)
+})
+
+test('applyProjectUpdate allows changing a legacy category to a supported category', () => {
+  const projects = [
+    makeProject({ id: 'proj_legacy', category: 'Developer Tools' }),
+  ]
+
+  const result = applyProjectUpdate(projects, 'proj_legacy', {
+    category: 'Design System',
+  })
+
+  assert.equal(result.success, true)
+  assert.equal(result.project.category, 'Design System')
+})
+
+test('applyProjectUpdate derives legacy validation context from the stored project', () => {
+  const projects = [makeProject({ id: 'proj_legacy', category: 'Branding' })]
+
+  const result = applyProjectUpdate(projects, 'proj_legacy', {
+    name: 'Renamed Legacy Project',
+    category: 'Branding',
+    originalCategory: 'Web Application',
+  })
+
+  assert.equal(result.success, true)
+  assert.equal(result.project.category, 'Branding')
+  assert.equal(result.project.name, 'Renamed Legacy Project')
+  assert.equal('originalCategory' in result.project, false)
 })

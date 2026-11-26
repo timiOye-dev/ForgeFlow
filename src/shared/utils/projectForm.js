@@ -51,16 +51,25 @@ function asString(value) {
   return String(value ?? '').trim()
 }
 
+export function getProjectCategoryOptions(project) {
+  const category = project?.category
+
+  if (typeof category !== 'string' || PROJECT_CATEGORIES.includes(category)) {
+    return PROJECT_CATEGORIES
+  }
+
+  return [category, ...PROJECT_CATEGORIES]
+}
+
 export function getProjectFormValues(project) {
   return {
     name: project?.name ?? '',
     client: project?.client ?? '',
     description: project?.description ?? '',
-    category: allowedValue(
-      project?.category,
-      PROJECT_CATEGORIES,
-      PROJECT_CATEGORIES[0]
-    ),
+    category:
+      typeof project?.category === 'string'
+        ? project.category
+        : PROJECT_CATEGORIES[0],
     status: allowedValue(project?.status, PROJECT_STATUSES, 'In Progress'),
     priority: allowedValue(project?.priority, PROJECT_PRIORITIES, 'Medium'),
     budget: project?.budget ?? '',
@@ -69,14 +78,20 @@ export function getProjectFormValues(project) {
   }
 }
 
-export function validateProjectForm(values) {
+export function validateProjectForm(values, context = {}) {
   const errors = {}
+  const originalCategory = context?.originalCategory
+
+  const isSupportedCategory = PROJECT_CATEGORIES.includes(values?.category)
+  const isUnchangedStoredCategory =
+    typeof originalCategory === 'string' &&
+    values?.category === originalCategory
 
   if (!asString(values?.name)) {
     errors.name = 'Project name is required.'
   }
 
-  if (!PROJECT_CATEGORIES.includes(values?.category)) {
+  if (!isSupportedCategory && !isUnchangedStoredCategory) {
     errors.category = 'Select a valid project category.'
   }
 
@@ -140,7 +155,9 @@ export function applyProjectUpdate(projects, id, updatedFields) {
   }
 
   const merged = { ...projects[index], ...updatedFields }
-  const validation = validateProjectForm(merged)
+  const validation = validateProjectForm(merged, {
+    originalCategory: projects[index]?.category,
+  })
 
   if (!validation.success) {
     const [message] = Object.values(validation.errors)
