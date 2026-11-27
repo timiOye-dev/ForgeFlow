@@ -13,7 +13,6 @@ export const INITIAL_USER = {
   title: 'Freelance Full-Stack Developer & Product Engineer',
   bio: 'Building modern web applications, scalable client software, and automated workflows.',
   theme: 'dark',
-  notifications: true,
   createdAt: '2026-01-15',
 }
 
@@ -270,8 +269,6 @@ export const INITIAL_TASKS = [
     priority: 'High', // 'Low' | 'Medium' | 'High'
     dueDate: '2026-08-01',
     assignee: 'Timilehin Oye',
-    estimatedHours: 16,
-    loggedHours: 11,
     createdAt: '2026-07-15',
   },
   {
@@ -284,8 +281,6 @@ export const INITIAL_TASKS = [
     priority: 'High',
     dueDate: '2026-08-03',
     assignee: 'Timilehin Oye',
-    estimatedHours: 8,
-    loggedHours: 5,
     createdAt: '2026-07-18',
   },
   {
@@ -298,8 +293,6 @@ export const INITIAL_TASKS = [
     priority: 'Medium',
     dueDate: '2026-07-25',
     assignee: 'Timilehin Oye',
-    estimatedHours: 12,
-    loggedHours: 12,
     createdAt: '2026-07-10',
   },
   {
@@ -312,8 +305,6 @@ export const INITIAL_TASKS = [
     priority: 'Medium',
     dueDate: '2026-08-10',
     assignee: 'Timilehin Oye',
-    estimatedHours: 6,
-    loggedHours: 0,
     createdAt: '2026-07-20',
   },
   {
@@ -326,8 +317,6 @@ export const INITIAL_TASKS = [
     priority: 'Low',
     dueDate: '2026-08-12',
     assignee: 'Timilehin Oye',
-    estimatedHours: 10,
-    loggedHours: 0,
     createdAt: '2026-07-21',
   },
   {
@@ -340,8 +329,6 @@ export const INITIAL_TASKS = [
     priority: 'Low',
     dueDate: '2026-07-18',
     assignee: 'Timilehin Oye',
-    estimatedHours: 4,
-    loggedHours: 4,
     createdAt: '2026-07-08',
   },
 ]

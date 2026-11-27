@@ -4,13 +4,13 @@
 
 **Version:** 1.0
 
-**Status:** Planning
+**Status:** V1 Implemented
 
 **Author:** Timilehin Oye
 
 **Document Owner:** Product & Engineering
 
-**Last Updated:** July 2026
+**Last Updated:** November 2026
 
 ---
 
@@ -108,14 +108,15 @@ From a learning perspective, success also includes:
 
 - Login
 - Register
-- Forgot Password
+- Demo Quick Sign In
+- Forgot Password (local-demo notice only; real password reset deferred)
 - Protected Routes
 
 ### Dashboard
 
 - Overview
 - Statistics
-- Recent Activity
+- Recent Activity (static sample/demo feed only)
 - Upcoming Deadlines
 - Quick Actions
 
@@ -133,7 +134,7 @@ From a learning perspective, success also includes:
 - Tasks
 - Milestones
 - Notes
-- Files
+- Files (metadata only; no real file upload or storage)
 
 ### Tasks
 
@@ -143,6 +144,8 @@ From a learning perspective, success also includes:
 - Status Updates
 - Priorities
 - Due Dates
+
+Task Details is deferred from V1; there is no dedicated Task Details page or route. Estimated and logged hour fields are excluded from V1 task creation, editing, lists, and statistics. Existing localStorage records may contain legacy hour fields, which are ignored rather than purged.
 
 ### Account
 
@@ -157,12 +160,14 @@ The following features are intentionally excluded:
 
 - AI Assistant
 - Real-time collaboration
-- Notifications
+- Notifications, including mock notification UI
 - Preferences
 - Calendar integration
-- Time tracking
+- Time tracking, including estimated and logged hour fields
 - Team permissions
-- Activity logs
+- Activity logs and real activity tracking
+- Real password recovery
+- Real file storage
 - Third-party integrations
 - Gantt charts
 - Automation workflows
@@ -197,7 +202,7 @@ Provide users with an immediate overview of ongoing work.
 Includes:
 
 - Active Projects
-- Recent Activity
+- Recent Activity (static sample/demo feed)
 - Upcoming Deadlines
 - Quick Actions
 - Statistics
@@ -216,7 +221,7 @@ Each project contains:
 - Tasks
 - Milestones
 - Notes
-- Files
+- Files (metadata only)
 
 ---
 
@@ -298,13 +303,13 @@ Frontend
 - Tailwind CSS
 - shadcn/ui
 - React Router
-- Framer Motion
+- `motion` (imported from `motion/react`)
 
 Backend
 
-Version 1 will use mock data.
+Version 1 has no backend. Seeded mock data is persisted in browser localStorage through app contexts and services.
 
-The architecture will be designed so a future backend can replace the mock data with minimal changes.
+The architecture is intended to let a future backend replace these local data sources with minimal UI changes.
 
 ---
 
@@ -354,9 +359,10 @@ These risks will be managed through iterative development and clear engineering 
 
 # 16. Revision History
 
-| Version | Date      | Description         |
-| ------- | --------- | ------------------- |
-| 1.0     | July 2026 | Initial PRD created |
+| Version | Date          | Description                                                           |
+| ------- | ------------- | --------------------------------------------------------------------- |
+| 1.0     | July 2026     | Initial PRD created                                                   |
+| 1.0     | November 2026 | V1 implementation reconciled with current scope and Phase 1–3 results |
 
 ---
 

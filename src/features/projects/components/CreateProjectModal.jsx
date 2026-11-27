@@ -32,7 +32,7 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
         {
           id: `m_init_1`,
           title: 'Discovery & Requirements Signoff',
-          completed: true,
+          completed: false,
           dueDate: formData.deadline,
         },
         {
@@ -63,10 +63,14 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
     <Modal isOpen={isOpen} onClose={onClose} title="Create New Project">
       <form onSubmit={handleSubmit} className="space-y-4 text-xs">
         <div>
-          <label className="block font-medium text-slate-300 mb-1">
+          <label
+            htmlFor="create-project-name"
+            className="block font-medium text-slate-300 mb-1"
+          >
             Project Name *
           </label>
           <input
+            id="create-project-name"
             type="text"
             required
             placeholder="e.g. NextGen Client Portal"
@@ -76,12 +80,16 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="create-project-client"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Client / Company
             </label>
             <input
+              id="create-project-client"
               type="text"
               placeholder="e.g. Acme Corp"
               value={formData.client}
@@ -93,10 +101,14 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="create-project-category"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Category
             </label>
             <select
+              id="create-project-category"
               value={formData.category}
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
@@ -113,10 +125,14 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
         </div>
 
         <div>
-          <label className="block font-medium text-slate-300 mb-1">
+          <label
+            htmlFor="create-project-description"
+            className="block font-medium text-slate-300 mb-1"
+          >
             Description
           </label>
           <textarea
+            id="create-project-description"
             rows={3}
             placeholder="Brief overview of project scope and key deliverables..."
             value={formData.description}
@@ -127,12 +143,16 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="create-project-status"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Status
             </label>
             <select
+              id="create-project-status"
               value={formData.status}
               onChange={(e) =>
                 setFormData({ ...formData, status: e.target.value })
@@ -148,10 +168,14 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="create-project-priority"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Priority
             </label>
             <select
+              id="create-project-priority"
               value={formData.priority}
               onChange={(e) =>
                 setFormData({ ...formData, priority: e.target.value })
@@ -167,10 +191,14 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="create-project-budget"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Budget
             </label>
             <input
+              id="create-project-budget"
               type="text"
               value={formData.budget}
               onChange={(e) =>
@@ -181,12 +209,16 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="create-project-deadline"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Deadline Date
             </label>
             <input
+              id="create-project-deadline"
               type="date"
               value={formData.deadline}
               onChange={(e) =>
@@ -197,10 +229,14 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="create-project-color"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Color Badge
             </label>
             <input
+              id="create-project-color"
               type="color"
               value={formData.color}
               onChange={(e) =>
@@ -211,17 +247,17 @@ export const CreateProjectModal = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
+        <div className="pt-4 flex flex-col-reverse gap-2 border-t border-slate-800 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-colors"
+            className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-colors w-full sm:w-auto"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors shadow-md shadow-indigo-600/20"
+            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors shadow-md shadow-indigo-600/20 w-full sm:w-auto"
           >
             Create Project
           </button>

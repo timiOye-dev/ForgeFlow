@@ -12,7 +12,7 @@ export const LandingPage = () => {
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
             <Zap className="w-5 h-5 fill-current" />
           </div>
-          <span className="font-bold text-xl tracking-tight text-white">
+          <span className="font-bold text-xl tracking-tight text-slate-100">
             ForgeFlow
           </span>
         </Link>
@@ -20,7 +20,7 @@ export const LandingPage = () => {
         <div className="flex items-center gap-4">
           <Link
             to="/login"
-            className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+            className="text-sm font-medium text-slate-300 hover:text-slate-100 transition-colors"
           >
             Sign In
           </Link>
@@ -39,7 +39,7 @@ export const LandingPage = () => {
           <span>ForgeFlow v1.0 Workspace Release</span>
         </div>
 
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white max-w-4xl leading-tight">
+        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-100 max-w-4xl leading-tight">
           Centralize projects, tasks, and deadlines in one{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
             unified workspace.
@@ -74,7 +74,7 @@ export const LandingPage = () => {
             <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-4">
               <FolderKanban className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <h3 className="text-lg font-semibold text-slate-100 mb-2">
               Project Hub
             </h3>
             <p className="text-sm text-slate-400 leading-relaxed">
@@ -87,12 +87,12 @@ export const LandingPage = () => {
             <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mb-4">
               <Clock className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <h3 className="text-lg font-semibold text-slate-100 mb-2">
               Task Management
             </h3>
             <p className="text-sm text-slate-400 leading-relaxed">
-              Track task priorities, log estimated and actual hours, set due
-              dates, and update progress with seamless status cycles.
+              Track task priorities, due dates, and progress with seamless
+              status cycles.
             </p>
           </div>
 
@@ -100,7 +100,7 @@ export const LandingPage = () => {
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <h3 className="text-lg font-semibold text-slate-100 mb-2">
               Milestones & Notes
             </h3>
             <p className="text-sm text-slate-400 leading-relaxed">

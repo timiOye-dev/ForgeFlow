@@ -131,10 +131,14 @@ export const EditTaskModal = ({ isOpen, onClose, task, onSuccess }) => {
         )}
 
         <div>
-          <label className="block font-medium text-slate-300 mb-1">
+          <label
+            htmlFor="edit-task-title"
+            className="block font-medium text-slate-300 mb-1"
+          >
             Task Title *
           </label>
           <input
+            id="edit-task-title"
             type="text"
             required
             value={formData.title}
@@ -144,10 +148,14 @@ export const EditTaskModal = ({ isOpen, onClose, task, onSuccess }) => {
         </div>
 
         <div>
-          <label className="block font-medium text-slate-300 mb-1">
+          <label
+            htmlFor="edit-task-project"
+            className="block font-medium text-slate-300 mb-1"
+          >
             Project Assignment
           </label>
           <select
+            id="edit-task-project"
             value={formData.projectId}
             onChange={handleChange('projectId')}
             className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
@@ -161,10 +169,14 @@ export const EditTaskModal = ({ isOpen, onClose, task, onSuccess }) => {
         </div>
 
         <div>
-          <label className="block font-medium text-slate-300 mb-1">
+          <label
+            htmlFor="edit-task-description"
+            className="block font-medium text-slate-300 mb-1"
+          >
             Description
           </label>
           <textarea
+            id="edit-task-description"
             rows={3}
             value={formData.description}
             onChange={handleChange('description')}
@@ -172,12 +184,16 @@ export const EditTaskModal = ({ isOpen, onClose, task, onSuccess }) => {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="edit-task-priority"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Priority
             </label>
             <select
+              id="edit-task-priority"
               value={formData.priority}
               onChange={handleChange('priority')}
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
@@ -191,10 +207,14 @@ export const EditTaskModal = ({ isOpen, onClose, task, onSuccess }) => {
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="edit-task-status"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Status
             </label>
             <select
+              id="edit-task-status"
               value={formData.status}
               onChange={handleChange('status')}
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
@@ -209,7 +229,10 @@ export const EditTaskModal = ({ isOpen, onClose, task, onSuccess }) => {
         </div>
 
         <div>
-          <label className="block font-medium text-slate-300 mb-1">
+          <label
+            htmlFor="edit-task-due-date"
+            className="block font-medium text-slate-300 mb-1"
+          >
             Due Date
           </label>
           {hasLegacyDueDate && (
@@ -222,35 +245,36 @@ export const EditTaskModal = ({ isOpen, onClose, task, onSuccess }) => {
               a new date or use Clear.
             </div>
           )}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <input
+              id="edit-task-due-date"
               type="date"
               value={formData.dueDate}
               onChange={handleDueDateChange}
-              className="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-slate-100 focus:outline-none focus:border-indigo-500 sm:flex-1"
             />
             <button
               type="button"
               onClick={handleClearDueDate}
-              className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-colors whitespace-nowrap"
+              className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-colors whitespace-nowrap w-full sm:w-auto"
             >
               Clear
             </button>
           </div>
         </div>
 
-        <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
+        <div className="pt-4 flex flex-col-reverse gap-2 border-t border-slate-800 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-colors"
+            className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-colors w-full sm:w-auto"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors shadow-md shadow-indigo-600/20 flex items-center gap-1.5 disabled:opacity-60"
+            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors shadow-md shadow-indigo-600/20 flex items-center justify-center gap-1.5 disabled:opacity-60 w-full sm:w-auto"
           >
             <Save className="w-3.5 h-3.5" />
             <span>Save Changes</span>

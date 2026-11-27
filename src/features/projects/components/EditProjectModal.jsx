@@ -78,10 +78,14 @@ export const EditProjectModal = ({ isOpen, onClose, project, onSuccess }) => {
         )}
 
         <div>
-          <label className="block font-medium text-slate-300 mb-1">
+          <label
+            htmlFor="edit-project-name"
+            className="block font-medium text-slate-300 mb-1"
+          >
             Project Name *
           </label>
           <input
+            id="edit-project-name"
             type="text"
             required
             placeholder="e.g. NextGen Client Portal"
@@ -91,12 +95,16 @@ export const EditProjectModal = ({ isOpen, onClose, project, onSuccess }) => {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="edit-project-client"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Client / Company
             </label>
             <input
+              id="edit-project-client"
               type="text"
               placeholder="e.g. Acme Corp"
               value={formData.client}
@@ -106,10 +114,14 @@ export const EditProjectModal = ({ isOpen, onClose, project, onSuccess }) => {
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="edit-project-category"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Category
             </label>
             <select
+              id="edit-project-category"
               value={formData.category}
               onChange={handleChange('category')}
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
@@ -124,10 +136,14 @@ export const EditProjectModal = ({ isOpen, onClose, project, onSuccess }) => {
         </div>
 
         <div>
-          <label className="block font-medium text-slate-300 mb-1">
+          <label
+            htmlFor="edit-project-description"
+            className="block font-medium text-slate-300 mb-1"
+          >
             Description
           </label>
           <textarea
+            id="edit-project-description"
             rows={3}
             placeholder="Brief overview of project scope and key deliverables..."
             value={formData.description}
@@ -136,12 +152,16 @@ export const EditProjectModal = ({ isOpen, onClose, project, onSuccess }) => {
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="edit-project-status"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Status
             </label>
             <select
+              id="edit-project-status"
               value={formData.status}
               onChange={handleChange('status')}
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
@@ -155,10 +175,14 @@ export const EditProjectModal = ({ isOpen, onClose, project, onSuccess }) => {
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="edit-project-priority"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Priority
             </label>
             <select
+              id="edit-project-priority"
               value={formData.priority}
               onChange={handleChange('priority')}
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
@@ -172,10 +196,14 @@ export const EditProjectModal = ({ isOpen, onClose, project, onSuccess }) => {
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="edit-project-budget"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Budget
             </label>
             <input
+              id="edit-project-budget"
               type="text"
               value={formData.budget}
               onChange={handleChange('budget')}
@@ -184,12 +212,16 @@ export const EditProjectModal = ({ isOpen, onClose, project, onSuccess }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="edit-project-deadline"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Deadline Date
             </label>
             <input
+              id="edit-project-deadline"
               type="date"
               value={formData.deadline}
               onChange={handleChange('deadline')}
@@ -198,10 +230,14 @@ export const EditProjectModal = ({ isOpen, onClose, project, onSuccess }) => {
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="edit-project-color"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Color Badge
             </label>
             <input
+              id="edit-project-color"
               type="color"
               value={formData.color}
               onChange={handleChange('color')}
@@ -210,18 +246,18 @@ export const EditProjectModal = ({ isOpen, onClose, project, onSuccess }) => {
           </div>
         </div>
 
-        <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
+        <div className="pt-4 flex flex-col-reverse gap-2 border-t border-slate-800 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-colors"
+            className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-colors w-full sm:w-auto"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors shadow-md shadow-indigo-600/20 flex items-center gap-2 disabled:opacity-60"
+            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 disabled:opacity-60 w-full sm:w-auto"
           >
             <Save className="w-3.5 h-3.5" />
             <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>

@@ -28,9 +28,10 @@ export const TaskListPage = () => {
   const [editingTask, setEditingTask] = useState(null)
 
   const filteredTasks = tasks.filter((t) => {
+    const query = search.toLowerCase()
     const matchesSearch =
-      t.title.toLowerCase().includes(search.toLowerCase()) ||
-      t.description.toLowerCase().includes(search.toLowerCase())
+      (t.title ?? '').toLowerCase().includes(query) ||
+      (t.description ?? '').toLowerCase().includes(query)
 
     const matchesStatus = statusFilter === 'All' || t.status === statusFilter
     const matchesPriority =
@@ -52,7 +53,8 @@ export const TaskListPage = () => {
             <span>Task Manager ({tasks.length})</span>
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
-            Track deliverable items, estimated effort, and client task deadlines
+            Track deliverable items, statuses, priorities, and client task
+            deadlines
           </p>
         </div>
 
@@ -71,6 +73,7 @@ export const TaskListPage = () => {
             <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-500" />
             <input
               type="text"
+              aria-label="Search tasks"
               placeholder="Search tasks..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -82,6 +85,8 @@ export const TaskListPage = () => {
             {statuses.map((s) => (
               <button
                 key={s}
+                type="button"
+                aria-pressed={statusFilter === s}
                 onClick={() => setStatusFilter(s)}
                 className={`px-3 py-1 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
                   statusFilter === s
@@ -96,6 +101,7 @@ export const TaskListPage = () => {
 
           <div className="flex items-center gap-2 text-xs text-slate-400 w-full md:w-auto justify-end">
             <select
+              aria-label="Filter by project"
               value={projectFilter}
               onChange={(e) => setProjectFilter(e.target.value)}
               className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-slate-200 focus:outline-none focus:border-indigo-500"
@@ -109,6 +115,7 @@ export const TaskListPage = () => {
             </select>
 
             <select
+              aria-label="Filter by priority"
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
               className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-slate-200 focus:outline-none focus:border-indigo-500"
@@ -135,6 +142,7 @@ export const TaskListPage = () => {
                 <div className="flex items-start gap-3">
                   <button
                     onClick={() => toggleTaskStatus(t.id)}
+                    aria-label={`Cycle status for "${t.title}"`}
                     title="Click to cycle status"
                     className={`mt-0.5 p-1 rounded border transition-colors shrink-0 ${
                       t.status === 'Done'
@@ -167,18 +175,13 @@ export const TaskListPage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                <div className="flex w-full flex-wrap items-center justify-between gap-2 self-end sm:w-auto sm:justify-end sm:self-center sm:gap-3">
                   <Badge variant={t.status}>{t.status}</Badge>
                   <Badge variant={t.priority}>{t.priority}</Badge>
 
                   <div className="text-right text-[11px] text-slate-400">
-                    <div className="flex items-center gap-1 font-medium text-slate-300">
+                    <span className="flex items-center justify-end gap-1 font-medium text-slate-300">
                       <Clock className="w-3 h-3 text-amber-400" />
-                      <span>
-                        {t.loggedHours}h / {t.estimatedHours}h
-                      </span>
-                    </div>
-                    <span className="text-slate-500 text-[10px]">
                       Due {t.dueDate}
                     </span>
                   </div>
@@ -212,6 +215,15 @@ export const TaskListPage = () => {
             icon={CheckSquare}
             title="No tasks found"
             description="Try adjusting your filters or adding a new task."
+            action={
+              <button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs transition-colors shadow-lg shadow-indigo-600/20"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Task</span>
+              </button>
+            }
           />
         )}
       </div>

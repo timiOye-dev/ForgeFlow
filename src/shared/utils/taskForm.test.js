@@ -41,8 +41,6 @@ const makeTask = (overrides = {}) => ({
   priority: 'Medium',
   dueDate: '2026-12-31',
   assignee: 'Timilehin Oye',
-  estimatedHours: 4,
-  loggedHours: 1,
   createdAt: '2026-01-01',
   ...overrides,
 })
@@ -59,6 +57,8 @@ test('task status and priority constants match the current task UI and seed data
   for (const task of INITIAL_TASKS) {
     assert.equal(TASK_STATUSES.includes(task.status), true)
     assert.equal(TASK_PRIORITIES.includes(task.priority), true)
+    assert.equal('estimatedHours' in task, false)
+    assert.equal('loggedHours' in task, false)
   }
 })
 
@@ -188,7 +188,7 @@ test('validateTaskForm rejects missing title, invalid project, status, priority,
   )
 })
 
-test('normalizeTaskForm returns only editable fields', () => {
+test('normalizeTaskForm returns only editable task fields', () => {
   const normalized = normalizeTaskForm(
     makeTask({
       id: 'task_hacked',
@@ -209,6 +209,8 @@ test('normalizeTaskForm returns only editable fields', () => {
     'dueDate',
   ])
   assert.equal('assignee' in normalized, false)
+  assert.equal('estimatedHours' in normalized, false)
+  assert.equal('loggedHours' in normalized, false)
   assert.equal('dueDateTouched' in normalized, false)
 })
 
@@ -316,8 +318,8 @@ test('resolveTaskFormValues rejects invalid date input without restoring the ori
   )
 })
 
-test('applyTaskUpdate preserves protected fields and does not mutate stored tasks', () => {
-  const storedTask = makeTask()
+test('applyTaskUpdate preserves protected fields and ignores legacy hour fields', () => {
+  const storedTask = makeTask({ estimatedHours: 4, loggedHours: 1 })
   const tasks = [storedTask]
   const originalTasks = clone(tasks)
   const updatedFields = normalizeTaskForm({
@@ -339,8 +341,8 @@ test('applyTaskUpdate preserves protected fields and does not mutate stored task
   assert.deepEqual(tasks, originalTasks)
 })
 
-test('applyTaskUpdate ignores caller-supplied protected fields', () => {
-  const storedTask = makeTask()
+test('applyTaskUpdate ignores caller-supplied protected and hour fields', () => {
+  const storedTask = makeTask({ estimatedHours: 4, loggedHours: 1 })
   const result = applyTaskUpdate(
     [storedTask],
     projects,
@@ -524,14 +526,30 @@ test('create form values use the intended project and fall back safely', () => {
     priority: 'Medium',
     status: 'Todo',
     dueDate: '',
-    estimatedHours: '4',
-    loggedHours: '0',
   })
 
   assert.equal(resolveCreateTaskProjectId('proj_deleted', projects), 'proj_1')
   assert.equal(resolveCreateTaskProjectId('', projects), 'proj_1')
   assert.equal(resolveCreateTaskProjectId('proj_2', []), '')
   assert.equal(getCreateTaskFormValues('proj_1', []).projectId, '')
+})
+
+test('create form values and created tasks do not include hour fields', () => {
+  const formValues = getCreateTaskFormValues('proj_1', projects)
+
+  assert.deepEqual(Object.keys(formValues), [
+    'title',
+    'description',
+    'projectId',
+    'priority',
+    'status',
+    'dueDate',
+  ])
+
+  const created = applyTaskCreate([], projects, makeTask())
+  assert.equal(created.success, true)
+  assert.equal('estimatedHours' in created.task, false)
+  assert.equal('loggedHours' in created.task, false)
 })
 
 test('create form reconciliation preserves unrelated form input', () => {
@@ -542,8 +560,6 @@ test('create form reconciliation preserves unrelated form input', () => {
     priority: 'High',
     status: 'In Review',
     dueDate: '2026-11-01',
-    estimatedHours: '8',
-    loggedHours: '2',
   }
 
   assert.deepEqual(
@@ -576,7 +592,6 @@ test('create form reconciliation preserves unrelated form input', () => {
 
   assert.equal(selectedDeleted.projectId, 'proj_2')
   assert.equal(selectedDeleted.title, 'Draft title')
-  assert.equal(selectedDeleted.estimatedHours, '8')
 
   const renamedProjects = [{ ...projects[0], name: 'Renamed' }, projects[1]]
   assert.equal(

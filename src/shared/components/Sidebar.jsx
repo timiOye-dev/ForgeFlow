@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -67,7 +67,10 @@ const SidebarContent = ({ onOpenCreateProject, onNavigate }) => {
 
         <div className="p-3">
           <button
-            onClick={onOpenCreateProject}
+            onClick={() => {
+              onOpenCreateProject?.()
+              onNavigate?.()
+            }}
             className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98]"
           >
             <Plus className="w-4 h-4" />
@@ -171,6 +174,7 @@ const SidebarContent = ({ onOpenCreateProject, onNavigate }) => {
           </div>
           <button
             onClick={handleLogout}
+            aria-label="Sign out"
             title="Sign out"
             className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors"
           >
@@ -183,21 +187,82 @@ const SidebarContent = ({ onOpenCreateProject, onNavigate }) => {
 }
 
 export const Sidebar = ({ onOpenCreateProject, mobileOpen, onClose }) => {
+  const sidebarRef = useRef(null)
+  const closeButtonRef = useRef(null)
+  const previouslyFocusedRef = useRef(null)
+  const onCloseRef = useRef(onClose)
+
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
+
   useEffect(() => {
     if (!mobileOpen) return
 
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose?.()
+    const dialog = sidebarRef.current
+    previouslyFocusedRef.current = document.activeElement
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    const getFocusableElements = () =>
+      Array.from(
+        dialog?.querySelectorAll(
+          'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ) || []
+      ).filter((element) => element.getClientRects().length > 0)
+
+    const focusInitialElement = () => {
+      const target = closeButtonRef.current || dialog
+      target?.focus({ preventScroll: true })
+    }
+
+    const frame = window.requestAnimationFrame(focusInitialElement)
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        onCloseRef.current?.()
+        return
+      }
+
+      if (event.key !== 'Tab') return
+
+      const focusableElements = getFocusableElements()
+      if (focusableElements.length === 0) {
+        event.preventDefault()
+        dialog?.focus({ preventScroll: true })
+        return
+      }
+
+      const first = focusableElements[0]
+      const last = focusableElements[focusableElements.length - 1]
+      const active = document.activeElement
+
+      if (!dialog?.contains(active)) {
+        event.preventDefault()
+        first.focus()
+      } else if (event.shiftKey && (active === first || active === dialog)) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault()
+        first.focus()
+      }
     }
 
     document.addEventListener('keydown', handleKeyDown)
-    document.body.style.overflow = 'hidden'
 
     return () => {
+      window.cancelAnimationFrame(frame)
       document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = 'unset'
+      document.body.style.overflow = previousOverflow
+
+      const previouslyFocused = previouslyFocusedRef.current
+      if (previouslyFocused && document.contains(previouslyFocused)) {
+        previouslyFocused.focus({ preventScroll: true })
+      }
     }
-  }, [mobileOpen, onClose])
+  }, [mobileOpen])
 
   return (
     <>
@@ -217,10 +282,12 @@ export const Sidebar = ({ onOpenCreateProject, mobileOpen, onClose }) => {
               onClick={onClose}
             />
             <motion.aside
+              ref={sidebarRef}
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'tween', duration: 0.25, ease: 'easeInOut' }}
+              tabIndex={-1}
               role="dialog"
               aria-modal="true"
               aria-label="Navigation menu"
@@ -228,6 +295,7 @@ export const Sidebar = ({ onOpenCreateProject, mobileOpen, onClose }) => {
             >
               <div className="flex items-center justify-end p-2 border-b border-slate-800/80 md:hidden">
                 <button
+                  ref={closeButtonRef}
                   onClick={onClose}
                   aria-label="Close navigation menu"
                   className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"

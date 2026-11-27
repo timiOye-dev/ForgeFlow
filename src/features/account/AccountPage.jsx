@@ -8,6 +8,7 @@ import { INITIAL_PROJECTS, INITIAL_TASKS } from '../../mocks/initialData'
 export const AccountPage = () => {
   const { user, updateProfile } = useAuth()
   const { theme, saveTheme } = useTheme()
+  const isDemoAccount = Boolean(user?.isDemo)
 
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -146,10 +147,14 @@ export const AccountPage = () => {
               className="w-16 h-16 rounded-full object-cover border-2 border-indigo-500"
             />
             <div className="flex-1">
-              <label className="block font-medium text-slate-300 mb-1">
+              <label
+                htmlFor="account-avatar"
+                className="block font-medium text-slate-300 mb-1"
+              >
                 Avatar Image URL
               </label>
               <input
+                id="account-avatar"
                 type="text"
                 value={formData.avatar}
                 onChange={(e) =>
@@ -162,10 +167,14 @@ export const AccountPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block font-medium text-slate-300 mb-1">
+              <label
+                htmlFor="account-name"
+                className="block font-medium text-slate-300 mb-1"
+              >
                 Full Name
               </label>
               <input
+                id="account-name"
                 type="text"
                 required
                 value={formData.name}
@@ -177,26 +186,47 @@ export const AccountPage = () => {
             </div>
 
             <div>
-              <label className="block font-medium text-slate-300 mb-1">
+              <label
+                htmlFor="account-email"
+                className="block font-medium text-slate-300 mb-1"
+              >
                 Email Address
               </label>
               <input
+                id="account-email"
                 type="email"
                 required
+                disabled={isDemoAccount}
+                aria-describedby={
+                  isDemoAccount ? 'account-email-demo-note' : undefined
+                }
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500 disabled:cursor-not-allowed disabled:text-slate-500"
               />
+              {isDemoAccount && (
+                <p
+                  id="account-email-demo-note"
+                  className="mt-1 text-[11px] text-slate-500"
+                >
+                  Demo account email is fixed so Demo Quick Sign In keeps
+                  working.
+                </p>
+              )}
             </div>
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="account-title"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Professional Title
             </label>
             <input
+              id="account-title"
               type="text"
               value={formData.title}
               onChange={(e) =>
@@ -207,8 +237,14 @@ export const AccountPage = () => {
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">Bio</label>
+            <label
+              htmlFor="account-bio"
+              className="block font-medium text-slate-300 mb-1"
+            >
+              Bio
+            </label>
             <textarea
+              id="account-bio"
               rows={3}
               value={formData.bio}
               onChange={(e) =>

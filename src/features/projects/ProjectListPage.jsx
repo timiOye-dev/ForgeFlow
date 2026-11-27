@@ -30,10 +30,11 @@ export const ProjectListPage = () => {
   const [deletionError, setDeletionError] = useState('')
 
   const filteredProjects = projects.filter((p) => {
+    const query = search.toLowerCase()
     const matchesSearch =
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.client.toLowerCase().includes(search.toLowerCase()) ||
-      p.description.toLowerCase().includes(search.toLowerCase())
+      (p.name ?? '').toLowerCase().includes(query) ||
+      (p.client ?? '').toLowerCase().includes(query) ||
+      (p.description ?? '').toLowerCase().includes(query)
 
     const matchesStatus = statusFilter === 'All' || p.status === statusFilter
     const matchesPriority =
@@ -102,6 +103,7 @@ export const ProjectListPage = () => {
             <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-500" />
             <input
               type="text"
+              aria-label="Search projects"
               placeholder="Search by project, client, or keyword..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -113,6 +115,8 @@ export const ProjectListPage = () => {
             {statuses.map((s) => (
               <button
                 key={s}
+                type="button"
+                aria-pressed={statusFilter === s}
                 onClick={() => setStatusFilter(s)}
                 className={`px-3 py-1 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
                   statusFilter === s
@@ -125,10 +129,14 @@ export const ProjectListPage = () => {
             ))}
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-slate-400 self-end md:self-auto">
+          <label
+            htmlFor="project-priority-filter"
+            className="flex items-center gap-2 text-xs text-slate-400 self-end md:self-auto"
+          >
             <Filter className="w-3.5 h-3.5" />
             <span>Priority:</span>
             <select
+              id="project-priority-filter"
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
               className="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-slate-200 focus:outline-none focus:border-indigo-500"
@@ -138,7 +146,7 @@ export const ProjectListPage = () => {
               <option value="Medium">Medium</option>
               <option value="Low">Low</option>
             </select>
-          </div>
+          </label>
         </div>
       </div>
 
@@ -158,11 +166,11 @@ export const ProjectListPage = () => {
                 className="p-5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between group shadow-sm"
               >
                 <div>
-                  <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                     <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
                       {p.client}
                     </span>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5">
                       <Badge variant={p.status}>{p.status}</Badge>
                       <Badge variant={p.priority}>{p.priority}</Badge>
                     </div>
@@ -225,7 +233,7 @@ export const ProjectListPage = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
                     <button
                       onClick={() => navigate(`/projects/${p.id}`)}
                       className="text-xs font-semibold text-indigo-400 hover:underline"
@@ -234,6 +242,7 @@ export const ProjectListPage = () => {
                     </button>
                     <button
                       onClick={() => handleDeleteProject(p)}
+                      aria-label={`Delete project "${p.name}"`}
                       title="Delete project"
                       className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors"
                     >

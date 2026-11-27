@@ -83,7 +83,7 @@ Before implementing any ticket, review:
 1. PRD.md
 2. ARCHITECTURE.md
 3. ENGINEERING_DECISIONS.md
-4. TASKS.md
+4. TASK.md
 
 If implementation conflicts with these documents, stop and explain the conflict before making changes.
 

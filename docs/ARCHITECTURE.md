@@ -6,7 +6,7 @@
 
 **Status:** Approved
 
-**Last Updated:** July 2026
+**Last Updated:** November 2026
 
 ---
 
@@ -78,7 +78,8 @@ Service Layer
 
 Data Layer
 
-- Mock JSON (Version 1)
+- Seeded mock data in `src/mocks/initialData.js` (Version 1)
+- Browser localStorage for accounts, sessions, projects, and tasks (Version 1)
 - Backend (Future)
 
 ---
@@ -102,30 +103,34 @@ Tasks remain an independent feature because multiple areas of the application de
 src/
 │
 ├── app/
+│ ├── contexts/
 │ ├── layouts/
 │ ├── providers/
-│ ├── router/
-│ └── contexts/
+│ └── router/
 │
 ├── features/
+│ ├── account/
 │ ├── auth/
 │ ├── dashboard/
 │ ├── projects/
-│ ├── tasks/
-│ └── account/
+│ └── tasks/
+│
+├── mocks/
+│ └── initialData.js
 │
 ├── shared/
 │ ├── components/
-│ ├── hooks/
+│ │ └── ui/
 │ ├── services/
-│ ├── utils/
-│ ├── constants/
-│ ├── icons/
-│ └── assets/
+│ └── utils/
 │
-├── mocks/
-│
-└── styles/
+├── App.css
+├── App.jsx
+├── assets/
+├── index.css
+└── main.jsx
+
+Tracked empty placeholders remain for `src/shared/hooks/`, `src/shared/constants/`, `src/shared/icons/`, `src/shared/assets/`, and `src/styles/`.
 
 ---
 
@@ -137,6 +142,7 @@ Public
 - Login
 - Register
 - Forgot Password
+- 404 (public catch-all)
 
 ↓
 
@@ -173,6 +179,8 @@ Public Routes
 
 /forgot-password
 
+/\* (public 404 page)
+
 Protected Routes
 
 /dashboard
@@ -185,7 +193,7 @@ Protected Routes
 
 /account
 
-Unknown routes redirect to a 404 page.
+Unknown routes render the public `NotFoundPage`; they are not redirected or authenticated.
 
 ---
 
@@ -203,22 +211,19 @@ Context
 - Theme
 - Projects
 - Tasks
+- Activity (static sample feed)
 
-Reducers should only be introduced when state transitions become sufficiently complex.
+Activity data is static and is not persisted. Reducers should only be introduced when state transitions become sufficiently complex.
 
 ---
 
 # 10. Data Flow
 
-Mock JSON
+Seeded mock data and localStorage
 
 ↓
 
-Services
-
-↓
-
-Context
+Contexts, services, and utilities
 
 ↓
 
@@ -228,7 +233,7 @@ Feature
 
 Components
 
-Components never communicate directly with the data source.
+Components use contexts and services for data. The approved exception is `AccountPage`, which imports seed data only to restore initial projects and tasks.
 
 ---
 
@@ -318,9 +323,10 @@ Business logic stays outside presentation components.
 
 # Revision History
 
-| Version | Date      | Description          |
-| ------- | --------- | -------------------- |
-| 1.0     | July 2026 | Initial architecture |
+| Version | Date          | Description                                        |
+| ------- | ------------- | -------------------------------------------------- |
+| 1.0     | July 2026     | Initial architecture                               |
+| 1.0     | November 2026 | Current V1 implementation and data flow reconciled |
 
 ---
 
@@ -338,7 +344,7 @@ Tasks → use shared utilities.
 
 Not Allowed:
 
-Projects importing internal components from Tasks.
+Projects importing arbitrary internal components from Tasks; Project Detail may reuse the Task create/edit modals as the approved V1 integration point.
 
 Tasks importing internal components from Dashboard.
 

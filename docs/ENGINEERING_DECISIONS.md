@@ -6,7 +6,7 @@
 
 **Status:** Approved
 
-**Last Updated:** July 2026
+**Last Updated:** November 2026
 
 ---
 
@@ -46,13 +46,14 @@ The project favors clear architecture over clever code.
 - Tailwind CSS
 - shadcn/ui
 - React Router
-- Framer Motion
+- `motion` (imported from `motion/react`)
 - Lucide React
 
 ## Version 1 Data Source
 
-- Mock JSON
-- Service Layer
+- Seeded mock data in `src/mocks/initialData.js`
+- Browser localStorage through app contexts and services
+- No backend in V1
 
 ## Future
 
@@ -145,6 +146,7 @@ For:
 - Theme
 - Projects
 - Tasks
+- Activity (static sample feed)
 
 ## useReducer
 
@@ -158,39 +160,33 @@ Avoid introducing global state unnecessarily.
 
 Data should always move in one direction.
 
-Mock Data
+Seeded mock data and localStorage
 ↓
 
-Service Layer
-↓
-
-Context
-
+Contexts, services, and utilities
 ↓
 
 Feature
-
 ↓
 
 Components
 
-Components should never import mock JSON directly.
+Components should use contexts and services for data. `AccountPage` is the approved exception: it imports seed data only for Reset Demo Data.
 
 ---
 
 # 9. Service Layer
 
-All data access should happen through dedicated services.
+Application data access should be centralized in contexts, services, and utilities so UI components do not depend on where data originates.
 
-Example:
+Examples:
 
-projectService.js
+- `authService.js`
+- `projectDeletionService.js`
 
-taskService.js
+Form-specific logic lives in `src/shared/utils/projectForm.js` and `src/shared/utils/taskForm.js`.
 
-authService.js
-
-The UI should never know where data originates.
+The UI should not depend on where data originates.
 
 This allows future backend integration without rewriting components.
 
@@ -204,15 +200,17 @@ Public Routes
 - Login
 - Register
 - Forgot Password
+- 404 (public catch-all)
 
 Protected Routes
 
 - Dashboard
 - Projects
+- Project Details (`/projects/:projectId`)
 - Tasks
 - Account
 
-Unauthenticated users should never access protected routes.
+Unknown routes render the 404 page without requiring authentication. Unauthenticated users should never access protected routes.
 
 ---
 
@@ -304,8 +302,11 @@ Examples:
 
 - Keyboard navigation
 - Semantic HTML
-- Accessible forms
-- Visible focus states
+- Accessible forms with explicit label associations
+- Modal dialogs with labelled titles, focus trapping/restoration, and Escape handling
+- Keyboard-navigable global search results with listbox semantics
+- Explicit labels for status, filter, milestone, note, upload, and delete controls
+- Visible focus states, including global `:focus-visible` styling
 - Color should never be the only status indicator
 
 ---
@@ -353,9 +354,10 @@ Every engineering decision should satisfy one or more of the following:
 
 # Revision History
 
-| Version | Date      | Description                   |
-| ------- | --------- | ----------------------------- |
-| 1.0     | July 2026 | Initial engineering standards |
+| Version | Date          | Description                                            |
+| ------- | ------------- | ------------------------------------------------------ |
+| 1.0     | July 2026     | Initial engineering standards                          |
+| 1.0     | November 2026 | Current stack, routing, data flow, and a11y reconciled |
 
 ---
 

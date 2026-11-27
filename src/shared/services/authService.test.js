@@ -274,6 +274,94 @@ test('demo quick sign in uses the dedicated seeded demo account', async () => {
   assert.equal(storageContains(storage, DEMO_CREDENTIALS.password), false)
 })
 
+test('demo profile email changes are rejected without mutating storage', async () => {
+  const { service, storage } = createTestService()
+
+  const demo = await service.loginDemo()
+  const accountsBefore = storage.getItem(AUTH_STORAGE_KEYS.ACCOUNTS)
+  const userBefore = storage.getItem(AUTH_STORAGE_KEYS.USER)
+
+  const result = service.updateProfile({
+    ...demo.user,
+    email: 'changed@forgeflow.local',
+  })
+
+  assert.equal(result.success, false)
+  assert.equal(result.error.code, 'DEMO_EMAIL_IMMUTABLE')
+  assert.match(result.error.message, /demo account email/i)
+  assert.equal(storage.getItem(AUTH_STORAGE_KEYS.ACCOUNTS), accountsBefore)
+  assert.equal(storage.getItem(AUTH_STORAGE_KEYS.USER), userBefore)
+})
+
+test('demo account permits non-email profile updates', async () => {
+  const { service, storage } = createTestService()
+
+  const demo = await service.loginDemo()
+  const result = service.updateProfile({
+    name: 'Updated Demo Name',
+    email: DEMO_CREDENTIALS.email,
+    title: 'Updated Title',
+    bio: 'Updated bio.',
+    avatar: 'https://example.com/demo.png',
+    theme: 'light',
+  })
+
+  assert.equal(result.success, true)
+  assert.equal(result.user.email, DEMO_CREDENTIALS.email)
+  assert.equal(result.user.name, 'Updated Demo Name')
+  assert.equal(result.user.title, 'Updated Title')
+  assert.equal(result.user.bio, 'Updated bio.')
+  assert.equal(result.user.avatar, 'https://example.com/demo.png')
+  assert.equal(result.user.theme, 'light')
+  assert.equal(result.user.isDemo, true)
+
+  const account = readJson(storage, AUTH_STORAGE_KEYS.ACCOUNTS).find(
+    (candidate) => candidate.id === demo.user.id
+  )
+  assert.equal(account.email, DEMO_CREDENTIALS.email)
+  assert.equal(account.profile.email, DEMO_CREDENTIALS.email)
+  assert.equal(account.profile.name, 'Updated Demo Name')
+  assert.equal(account.profile.theme, 'light')
+
+  const restored = createTestService(storage).service.restoreSession()
+  assert.equal(restored.isAuthenticated, true)
+  assert.equal(restored.user.email, DEMO_CREDENTIALS.email)
+  assert.equal(restored.user.name, 'Updated Demo Name')
+  assert.equal(restored.user.theme, 'light')
+})
+
+test('rejected demo email change keeps demo sign-in and restore consistent', async () => {
+  const { service, storage } = createTestService()
+
+  const firstDemoLogin = await service.loginDemo()
+
+  const attemptedChange = service.updateProfile({
+    ...firstDemoLogin.user,
+    email: 'changed@forgeflow.local',
+  })
+  assert.equal(attemptedChange.success, false)
+  assert.equal(attemptedChange.error.code, 'DEMO_EMAIL_IMMUTABLE')
+
+  service.logout()
+
+  const secondDemoLogin = await service.loginDemo()
+  assert.equal(secondDemoLogin.success, true)
+  assert.equal(secondDemoLogin.user.id, firstDemoLogin.user.id)
+  assert.equal(secondDemoLogin.user.email, DEMO_CREDENTIALS.email)
+
+  const accounts = readJson(storage, AUTH_STORAGE_KEYS.ACCOUNTS)
+  assert.equal(accounts.length, 1)
+  assert.equal(new Set(accounts.map((account) => account.id)).size, 1)
+  assert.equal(accounts[0].id, firstDemoLogin.user.id)
+  assert.equal(accounts[0].email, DEMO_CREDENTIALS.email)
+
+  const restored = createTestService(storage).service.restoreSession()
+  assert.equal(restored.isAuthenticated, true)
+  assert.equal(restored.user.id, firstDemoLogin.user.id)
+  assert.equal(restored.user.email, DEMO_CREDENTIALS.email)
+  assert.equal(restored.user.name, firstDemoLogin.user.name)
+})
+
 test('legacy, malformed, and orphaned sessions do not authenticate', () => {
   const { service, storage } = createTestService()
 
@@ -575,6 +663,36 @@ test('appearance updates preserve profile information', async () => {
   assert.equal(storedAccount.profile.bio, 'First computer programmer.')
   assert.equal(storedAccount.profile.avatar, 'https://example.com/ada.png')
   assert.equal(storedAccount.profile.theme, 'light')
+})
+
+test('legacy notification profile data is ignored without purging the account record', async () => {
+  const { service, storage } = createTestService()
+  const registered = await service.register({
+    name: 'Ada Lovelace',
+    email: 'ada@example.com',
+    password: 'password123',
+    confirmPassword: 'password123',
+  })
+
+  const accounts = readJson(storage, AUTH_STORAGE_KEYS.ACCOUNTS)
+  const storedAccount = accounts.find(
+    (account) => account.id === registered.user.id
+  )
+  storedAccount.profile.notifications = true
+  storage.setItem(AUTH_STORAGE_KEYS.ACCOUNTS, JSON.stringify(accounts))
+
+  const restored = service.restoreSession()
+  assert.equal(restored.isAuthenticated, true)
+  assert.equal('notifications' in restored.user, false)
+
+  const updated = service.updateProfile({ name: 'Ada Byron' })
+  assert.equal(updated.success, true)
+  assert.equal('notifications' in updated.user, false)
+
+  const persistedAccount = readJson(storage, AUTH_STORAGE_KEYS.ACCOUNTS).find(
+    (account) => account.id === registered.user.id
+  )
+  assert.equal(persistedAccount.profile.notifications, true)
 })
 
 test('hashing failures fail closed without plaintext fallback', async () => {

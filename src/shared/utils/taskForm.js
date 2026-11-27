@@ -275,8 +275,6 @@ export function getCreateTaskFormValues(defaultProjectId, projects) {
     priority: 'Medium',
     status: 'Todo',
     dueDate: '',
-    estimatedHours: '4',
-    loggedHours: '0',
   }
 }
 

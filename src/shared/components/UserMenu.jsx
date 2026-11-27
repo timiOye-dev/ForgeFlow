@@ -79,7 +79,7 @@ export const UserMenu = () => {
           <div
             role="menu"
             aria-label="User menu"
-            className="absolute right-0 mt-2 w-72 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-2 z-50"
+            className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-2 z-50"
           >
             <div className="flex items-center gap-3 p-3 border-b border-slate-800/80">
               <img

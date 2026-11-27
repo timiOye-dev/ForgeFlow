@@ -211,6 +211,7 @@ export const DashboardPage = () => {
                     <div className="flex items-start gap-2.5">
                       <button
                         onClick={() => toggleTaskStatus(t.id)}
+                        aria-label={`Cycle status for "${t.title}"`}
                         className="mt-0.5 text-slate-500 hover:text-emerald-400 transition-colors"
                       >
                         <CheckCircle2 className="w-4 h-4" />

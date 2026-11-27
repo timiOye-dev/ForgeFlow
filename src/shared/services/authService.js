@@ -213,10 +213,6 @@ function toUser(account) {
     title: account.profile.title ?? INITIAL_USER.title,
     bio: account.profile.bio ?? INITIAL_USER.bio,
     theme: normalizeTheme(account.profile.theme),
-    notifications:
-      typeof account.profile.notifications === 'boolean'
-        ? account.profile.notifications
-        : INITIAL_USER.notifications,
     createdAt: account.createdAt ?? INITIAL_USER.createdAt,
     isDemo: Boolean(account.isDemo),
   }
@@ -539,6 +535,16 @@ export function createAuthService({
       return failure('INVALID_EMAIL', 'Enter a valid email address.')
     }
 
+    if (
+      currentAccount.isDemo &&
+      nextEmail !== normalizeEmail(currentAccount.email)
+    ) {
+      return failure(
+        'DEMO_EMAIL_IMMUTABLE',
+        'Demo account email cannot be changed.'
+      )
+    }
+
     const duplicate = accounts.some(
       (account, index) => index !== accountIndex && account.email === nextEmail
     )
@@ -566,9 +572,6 @@ export function createAuthService({
       if (typeof updates[field] === 'string') {
         profileUpdates[field] = updates[field]
       }
-    }
-    if (typeof updates.notifications === 'boolean') {
-      profileUpdates.notifications = updates.notifications
     }
 
     const nextAccount = {

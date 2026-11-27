@@ -56,8 +56,6 @@ export const TaskProvider = ({ children }) => {
         taskData.dueDate ||
         new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0],
       assignee: taskData.assignee || 'Timilehin Oye',
-      estimatedHours: Number(taskData.estimatedHours || 0),
-      loggedHours: Number(taskData.loggedHours || 0),
       createdAt: new Date().toISOString().split('T')[0],
     }
     const result = applyTaskCreate(tasksRef.current, projects, newTask)

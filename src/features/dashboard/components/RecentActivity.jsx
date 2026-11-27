@@ -19,10 +19,15 @@ export const RecentActivity = () => {
 
   return (
     <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3 shadow-sm">
-      <h2 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-        <Activity className="w-4 h-4 text-indigo-400" />
-        <span>Recent Activity</span>
-      </h2>
+      <div className="space-y-1">
+        <h2 className="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <Activity className="w-4 h-4 text-indigo-400" />
+          <span>Recent Activity</span>
+        </h2>
+        <p className="text-[10px] text-slate-500">
+          Sample/demo data only — this feed does not track live actions.
+        </p>
+      </div>
 
       <div className="space-y-2">
         {activities.map((a) => {

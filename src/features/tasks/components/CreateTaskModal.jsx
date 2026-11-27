@@ -104,10 +104,14 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
         )}
 
         <div>
-          <label className="block font-medium text-slate-300 mb-1">
+          <label
+            htmlFor="create-task-title"
+            className="block font-medium text-slate-300 mb-1"
+          >
             Task Title *
           </label>
           <input
+            id="create-task-title"
             type="text"
             required
             placeholder="e.g. Implement OAuth2 authentication flow"
@@ -120,11 +124,14 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
         </div>
 
         <div>
-          <label className="block font-medium text-slate-300 mb-1">
+          <label
+            htmlFor="create-task-project"
+            className="block font-medium text-slate-300 mb-1"
+          >
             Project Assignment
           </label>
           <select
-            aria-label="Project Assignment"
+            id="create-task-project"
             disabled={projects.length === 0}
             value={formData.projectId}
             onChange={(e) =>
@@ -144,10 +151,14 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
         </div>
 
         <div>
-          <label className="block font-medium text-slate-300 mb-1">
+          <label
+            htmlFor="create-task-description"
+            className="block font-medium text-slate-300 mb-1"
+          >
             Description
           </label>
           <textarea
+            id="create-task-description"
             rows={3}
             placeholder="Technical details, acceptance criteria, or relevant links..."
             value={formData.description}
@@ -161,12 +172,16 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="create-task-priority"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Priority
             </label>
             <select
+              id="create-task-priority"
               value={formData.priority}
               onChange={(e) =>
                 setFormData((current) => ({
@@ -183,10 +198,14 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
           </div>
 
           <div>
-            <label className="block font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="create-task-status"
+              className="block font-medium text-slate-300 mb-1"
+            >
               Status
             </label>
             <select
+              id="create-task-status"
               value={formData.status}
               onChange={(e) =>
                 setFormData((current) => ({
@@ -204,73 +223,39 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
-          <div>
-            <label className="block font-medium text-slate-300 mb-1">
-              Due Date
-            </label>
-            <input
-              type="date"
-              value={formData.dueDate}
-              onChange={(e) =>
-                setFormData((current) => ({
-                  ...current,
-                  dueDate: e.target.value,
-                }))
-              }
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium text-slate-300 mb-1">
-              Est. Hours
-            </label>
-            <input
-              type="number"
-              min="0"
-              value={formData.estimatedHours}
-              onChange={(e) =>
-                setFormData((current) => ({
-                  ...current,
-                  estimatedHours: e.target.value,
-                }))
-              }
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium text-slate-300 mb-1">
-              Logged Hours
-            </label>
-            <input
-              type="number"
-              min="0"
-              value={formData.loggedHours}
-              onChange={(e) =>
-                setFormData((current) => ({
-                  ...current,
-                  loggedHours: e.target.value,
-                }))
-              }
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
-            />
-          </div>
+        <div>
+          <label
+            htmlFor="create-task-due-date"
+            className="block font-medium text-slate-300 mb-1"
+          >
+            Due Date
+          </label>
+          <input
+            id="create-task-due-date"
+            type="date"
+            value={formData.dueDate}
+            onChange={(e) =>
+              setFormData((current) => ({
+                ...current,
+                dueDate: e.target.value,
+              }))
+            }
+            className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
+          />
         </div>
 
-        <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
+        <div className="pt-4 flex flex-col-reverse gap-2 border-t border-slate-800 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
           <button
             type="button"
             onClick={handleClose}
-            className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-colors"
+            className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-colors w-full sm:w-auto"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={projects.length === 0}
-            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors shadow-md shadow-indigo-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors shadow-md shadow-indigo-600/20 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
           >
             Add Task
           </button>

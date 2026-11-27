@@ -58,7 +58,7 @@ export const LoginPage = () => {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
               <Zap className="w-6 h-6 fill-current" />
             </div>
-            <span className="font-bold text-2xl tracking-tight text-white">
+            <span className="font-bold text-2xl tracking-tight text-slate-100">
               ForgeFlow
             </span>
           </Link>

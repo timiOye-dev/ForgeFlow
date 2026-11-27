@@ -122,6 +122,7 @@ export const ProjectDetailPage = () => {
       <div className="flex items-center gap-2">
         <button
           onClick={() => navigate('/projects')}
+          aria-label="Back to projects"
           className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-100 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -162,7 +163,7 @@ export const ProjectDetailPage = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2">
             <Badge variant={project.status}>{project.status}</Badge>
             <Badge variant={project.priority}>{project.priority}</Badge>
             <button
@@ -253,29 +254,42 @@ export const ProjectDetailPage = () => {
               </div>
 
               <div className="space-y-2">
-                {project.milestones?.map((m) => (
-                  <div
-                    key={m.id}
-                    onClick={() => toggleMilestone(project.id, m.id)}
-                    className="flex items-center justify-between p-2.5 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer hover:border-slate-700 transition-colors text-xs"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <div
-                        className={`w-4 h-4 rounded flex items-center justify-center border ${m.completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-600'}`}
-                      >
-                        {m.completed && <CheckCircle2 className="w-3 h-3" />}
-                      </div>
-                      <span
-                        className={`font-medium ${m.completed ? 'line-through text-slate-500' : 'text-slate-200'}`}
-                      >
-                        {m.title}
+                {project.milestones?.length ? (
+                  project.milestones.map((m) => (
+                    <button
+                      key={m.id}
+                      type="button"
+                      role="checkbox"
+                      aria-checked={m.completed}
+                      aria-label={`Milestone: ${m.title}`}
+                      onClick={() => toggleMilestone(project.id, m.id)}
+                      className="flex w-full items-center justify-between gap-3 p-2.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-700 transition-colors text-xs text-left"
+                    >
+                      <span className="flex min-w-0 items-center gap-2.5">
+                        <span
+                          className={`w-4 h-4 shrink-0 rounded flex items-center justify-center border ${m.completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-600'}`}
+                        >
+                          {m.completed && <CheckCircle2 className="w-3 h-3" />}
+                        </span>
+                        <span
+                          className={`truncate font-medium ${m.completed ? 'line-through text-slate-500' : 'text-slate-200'}`}
+                        >
+                          {m.title}
+                        </span>
                       </span>
-                    </div>
-                    <span className="text-[10px] text-slate-500">
-                      {m.dueDate}
-                    </span>
-                  </div>
-                ))}
+                      <span className="shrink-0 text-[10px] text-slate-500">
+                        {m.dueDate}
+                      </span>
+                    </button>
+                  ))
+                ) : (
+                  <EmptyState
+                    icon={CheckCircle2}
+                    title="No milestones yet"
+                    description="Use the Milestones tab to add your first project checkpoint."
+                    className="py-8"
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -330,12 +344,13 @@ export const ProjectDetailPage = () => {
               projectTasks.map((t) => (
                 <div
                   key={t.id}
-                  className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs"
+                  className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 flex flex-col gap-3 text-xs sm:flex-row sm:items-center sm:justify-between"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
                     <button
                       onClick={() => toggleTaskStatus(t.id)}
-                      className={`p-1 rounded border transition-colors ${
+                      aria-label={`Cycle status for "${t.title}"`}
+                      className={`p-1 rounded border transition-colors shrink-0 ${
                         t.status === 'Done'
                           ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
                           : 'border-slate-700 text-slate-400'
@@ -355,7 +370,7 @@ export const ProjectDetailPage = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0">
+                  <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:w-auto sm:justify-end sm:gap-3">
                     <Badge variant={t.status}>{t.status}</Badge>
                     <Badge variant={t.priority}>{t.priority}</Badge>
                     <span className="text-[11px] text-slate-500">
@@ -406,6 +421,7 @@ export const ProjectDetailPage = () => {
               <input
                 type="text"
                 required
+                aria-label="Milestone title"
                 placeholder="Milestone title (e.g. Design Prototype Signoff)"
                 value={newMilestoneTitle}
                 onChange={(e) => setNewMilestoneTitle(e.target.value)}
@@ -413,6 +429,7 @@ export const ProjectDetailPage = () => {
               />
               <input
                 type="date"
+                aria-label="Milestone due date"
                 value={newMilestoneDueDate}
                 onChange={(e) => setNewMilestoneDueDate(e.target.value)}
                 className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
@@ -427,29 +444,42 @@ export const ProjectDetailPage = () => {
           </div>
 
           <div className="space-y-2">
-            {project.milestones?.map((m) => (
-              <div
-                key={m.id}
-                onClick={() => toggleMilestone(project.id, m.id)}
-                className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between cursor-pointer hover:border-slate-700 transition-colors text-xs"
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-5 h-5 rounded flex items-center justify-center border ${m.completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-600'}`}
-                  >
-                    {m.completed && <CheckCircle2 className="w-3.5 h-3.5" />}
-                  </div>
-                  <span
-                    className={`font-semibold ${m.completed ? 'line-through text-slate-500' : 'text-slate-100'}`}
-                  >
-                    {m.title}
+            {project.milestones?.length ? (
+              project.milestones.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  role="checkbox"
+                  aria-checked={m.completed}
+                  aria-label={`Milestone: ${m.title}`}
+                  onClick={() => toggleMilestone(project.id, m.id)}
+                  className="flex w-full flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors text-xs text-left"
+                >
+                  <span className="flex min-w-0 items-center gap-3">
+                    <span
+                      className={`w-5 h-5 shrink-0 rounded flex items-center justify-center border ${m.completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-600'}`}
+                    >
+                      {m.completed && <CheckCircle2 className="w-3.5 h-3.5" />}
+                    </span>
+                    <span
+                      className={`font-semibold ${m.completed ? 'line-through text-slate-500' : 'text-slate-100'}`}
+                    >
+                      {m.title}
+                    </span>
                   </span>
-                </div>
-                <span className="text-[11px] text-amber-400 font-medium">
-                  Due: {m.dueDate}
-                </span>
-              </div>
-            ))}
+                  <span className="text-[11px] text-amber-400 font-medium">
+                    Due: {m.dueDate}
+                  </span>
+                </button>
+              ))
+            ) : (
+              <EmptyState
+                icon={CheckCircle2}
+                title="No milestones yet"
+                description="Add a milestone above to track a key project checkpoint."
+                className="py-10"
+              />
+            )}
           </div>
         </div>
       )}
@@ -464,6 +494,7 @@ export const ProjectDetailPage = () => {
               <input
                 type="text"
                 required
+                aria-label="Note title"
                 placeholder="Note title (e.g. Client Feedback Summary)"
                 value={newNoteTitle}
                 onChange={(e) => setNewNoteTitle(e.target.value)}
@@ -472,6 +503,7 @@ export const ProjectDetailPage = () => {
               <textarea
                 rows={3}
                 required
+                aria-label="Note content"
                 placeholder="Type note content..."
                 value={newNoteContent}
                 onChange={(e) => setNewNoteContent(e.target.value)}
@@ -486,35 +518,45 @@ export const ProjectDetailPage = () => {
             </form>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {project.notes?.map((n) => (
-              <div
-                key={n.id}
-                className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2 text-xs flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <h4 className="font-bold text-slate-100">{n.title}</h4>
-                    <span className="text-[10px] text-slate-500">
-                      {n.updatedAt}
-                    </span>
+          {project.notes?.length ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {project.notes.map((n) => (
+                <div
+                  key={n.id}
+                  className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2 text-xs flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+                      <h4 className="font-bold text-slate-100">{n.title}</h4>
+                      <span className="text-[10px] text-slate-500">
+                        {n.updatedAt}
+                      </span>
+                    </div>
+                    <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">
+                      {n.content}
+                    </p>
                   </div>
-                  <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">
-                    {n.content}
-                  </p>
+                  <div className="pt-2 flex justify-end">
+                    <button
+                      onClick={() => deleteNote(project.id, n.id)}
+                      aria-label={`Delete note "${n.title}"`}
+                      className="text-[10px] text-rose-400 hover:underline flex items-center gap-1"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      <span>Delete</span>
+                    </button>
+                  </div>
                 </div>
-                <div className="pt-2 flex justify-end">
-                  <button
-                    onClick={() => deleteNote(project.id, n.id)}
-                    className="text-[10px] text-rose-400 hover:underline flex items-center gap-1"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                    <span>Delete</span>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              icon={FileText}
+              title="No notes yet"
+              description="Capture client feedback, specifications, and implementation details in the form above."
+              className="py-10"
+            />
+          )}
         </div>
       )}
 
@@ -528,42 +570,56 @@ export const ProjectDetailPage = () => {
             <p className="text-[11px] text-slate-500">
               Attach design specs, SOW agreements, or wireframe exports
             </p>
-            <label className="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium cursor-pointer transition-colors">
+            <label
+              htmlFor="project-file-upload"
+              className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-indigo-400 focus-within:ring-offset-2 focus-within:ring-offset-slate-900"
+            >
               <span>Choose File</span>
               <input
+                id="project-file-upload"
                 type="file"
                 onChange={handleFileUpload}
-                className="hidden"
+                className="sr-only"
               />
             </label>
           </div>
 
-          <div className="space-y-2">
-            {project.files?.map((f) => (
-              <div
-                key={f.id}
-                className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs"
-              >
-                <div className="flex items-center gap-3">
-                  <Paperclip className="w-4 h-4 text-indigo-400" />
-                  <div>
-                    <h5 className="font-semibold text-slate-200">{f.name}</h5>
-                    <span className="text-[10px] text-slate-500">
-                      {f.size} • Uploaded {f.uploadedAt}
-                    </span>
+          {project.files?.length ? (
+            <div className="space-y-2">
+              {project.files.map((f) => (
+                <div
+                  key={f.id}
+                  className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Paperclip className="w-4 h-4 shrink-0 text-indigo-400" />
+                    <div className="min-w-0">
+                      <h5 className="font-semibold text-slate-200 break-words">
+                        {f.name}
+                      </h5>
+                      <span className="text-[10px] text-slate-500">
+                        {f.size} • Uploaded {f.uploadedAt}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-2">
                   <button
                     onClick={() => deleteFile(project.id, f.id)}
+                    aria-label={`Delete file "${f.name}"`}
                     className="p-1.5 rounded text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              icon={Paperclip}
+              title="No files yet"
+              description="Attach design specs, SOW agreements, or wireframe exports using the upload control above."
+              className="py-10"
+            />
+          )}
         </div>
       )}
 

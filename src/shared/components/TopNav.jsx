@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Menu, Search, Bell, FolderPlus, CheckSquare, X } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { Menu, Search, FolderPlus, CheckSquare, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useProjects } from '../../app/contexts/ProjectContext'
 import { useTasks } from '../../app/contexts/TaskContext'
@@ -12,7 +12,8 @@ export const TopNav = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [showSearchResults, setShowSearchResults] = useState(false)
-  const [showNotifications, setShowNotifications] = useState(false)
+  const searchInputRef = useRef(null)
+  const searchResultsRef = useRef(null)
   const { projects } = useProjects()
   const { tasks } = useTasks()
   const navigate = useNavigate()
@@ -31,20 +32,68 @@ export const TopNav = ({
       )
     : []
 
-  const notifications = [
-    {
-      id: '1',
-      title: 'Task Due Soon',
-      text: 'Design Figma Component Library is due in 3 days.',
-      time: '10m ago',
-    },
-    {
-      id: '2',
-      title: 'Milestone Completed',
-      text: 'Brand Guidelines Manual PDF completed.',
-      time: '2h ago',
-    },
-  ]
+  const getResultButtons = () =>
+    Array.from(
+      searchResultsRef.current?.querySelectorAll('[data-search-result]') || []
+    )
+
+  const closeSearchResults = () => {
+    setShowSearchResults(false)
+    searchInputRef.current?.focus()
+  }
+
+  const handleSearchKeyDown = (event) => {
+    if (event.key === 'Escape') {
+      if (showSearchResults) {
+        event.preventDefault()
+        setShowSearchResults(false)
+      }
+      return
+    }
+
+    const results = getResultButtons()
+    if (results.length === 0) return
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      results[0].focus()
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      results[results.length - 1].focus()
+    }
+  }
+
+  const handleResultKeyDown = (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      closeSearchResults()
+      return
+    }
+
+    const results = getResultButtons()
+    if (results.length === 0) return
+
+    const currentIndex = results.indexOf(event.currentTarget)
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      results[(currentIndex + 1) % results.length].focus()
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      results[(currentIndex - 1 + results.length) % results.length].focus()
+    }
+  }
+
+  const selectProjectResult = (projectId) => {
+    navigate(`/projects/${projectId}`)
+    setShowSearchResults(false)
+    setSearchQuery('')
+  }
+
+  const selectTaskResult = () => {
+    navigate('/tasks')
+    setShowSearchResults(false)
+    setSearchQuery('')
+  }
 
   return (
     <header className="h-16 border-b border-slate-800 bg-slate-900/80 backdrop-blur-md px-4 md:px-6 flex items-center justify-between gap-3 sticky top-0 z-30">
@@ -61,9 +110,14 @@ export const TopNav = ({
           <div className="relative flex items-center">
             <Search className="w-4 h-4 absolute left-3 text-slate-500 pointer-events-none" />
             <input
+              ref={searchInputRef}
               id="global-search"
               name="global-search"
               type="text"
+              aria-label="Search projects, tasks, or clients"
+              aria-autocomplete="list"
+              aria-controls="global-search-results"
+              aria-expanded={showSearchResults && Boolean(searchQuery.trim())}
               placeholder="Search projects, tasks, or clients..."
               value={searchQuery}
               onChange={(e) => {
@@ -71,11 +125,17 @@ export const TopNav = ({
                 setShowSearchResults(true)
               }}
               onFocus={() => setShowSearchResults(true)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-8 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+              onKeyDown={handleSearchKeyDown}
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-8 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
             />
             {searchQuery && (
               <button
-                onClick={() => setSearchQuery('')}
+                type="button"
+                onClick={() => {
+                  setSearchQuery('')
+                  searchInputRef.current?.focus()
+                }}
+                aria-label="Clear search"
                 className="absolute right-2.5 text-slate-500 hover:text-slate-300"
               >
                 <X className="w-3.5 h-3.5" />
@@ -86,62 +146,83 @@ export const TopNav = ({
           {showSearchResults && searchQuery.trim() && (
             <>
               <div
+                aria-hidden="true"
                 className="fixed inset-0 z-40"
                 onClick={() => setShowSearchResults(false)}
               />
-              <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-3 z-50 max-h-80 overflow-y-auto">
-                <div className="text-[11px] font-semibold text-slate-500 uppercase px-2 mb-1">
+              <div
+                id="global-search-results"
+                ref={searchResultsRef}
+                role="listbox"
+                aria-label="Search results"
+                className="absolute top-full left-0 right-0 max-w-full bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-3 z-50 max-h-80 overflow-y-auto"
+              >
+                <div
+                  role="presentation"
+                  className="text-[11px] font-semibold text-slate-500 uppercase px-2 mb-1"
+                >
                   Projects
                 </div>
                 {filteredProjects.length > 0 ? (
                   filteredProjects.map((p) => (
-                    <div
+                    <button
                       key={p.id}
-                      onClick={() => {
-                        navigate(`/projects/${p.id}`)
-                        setShowSearchResults(false)
-                        setSearchQuery('')
-                      }}
-                      className="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-slate-800 cursor-pointer text-xs transition-colors"
+                      type="button"
+                      role="option"
+                      aria-selected={false}
+                      data-search-result
+                      onClick={() => selectProjectResult(p.id)}
+                      onKeyDown={handleResultKeyDown}
+                      className="w-full flex items-center justify-between gap-3 px-2 py-1.5 rounded-lg hover:bg-slate-800 cursor-pointer text-xs transition-colors text-left"
                     >
-                      <span className="font-medium text-slate-200">
+                      <span className="font-medium text-slate-200 truncate min-w-0">
                         {p.name}
                       </span>
-                      <span className="text-[10px] text-slate-500">
+                      <span className="text-[10px] text-slate-500 truncate shrink-0">
                         {p.client}
                       </span>
-                    </div>
+                    </button>
                   ))
                 ) : (
-                  <div className="text-xs text-slate-500 px-2 py-1 italic">
+                  <div
+                    role="presentation"
+                    className="text-xs text-slate-500 px-2 py-1 italic"
+                  >
                     No projects found
                   </div>
                 )}
 
-                <div className="text-[11px] font-semibold text-slate-500 uppercase px-2 mt-3 mb-1">
+                <div
+                  role="presentation"
+                  className="text-[11px] font-semibold text-slate-500 uppercase px-2 mt-3 mb-1"
+                >
                   Tasks
                 </div>
                 {filteredTasks.length > 0 ? (
                   filteredTasks.map((t) => (
-                    <div
+                    <button
                       key={t.id}
-                      onClick={() => {
-                        navigate('/tasks')
-                        setShowSearchResults(false)
-                        setSearchQuery('')
-                      }}
-                      className="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-slate-800 cursor-pointer text-xs transition-colors"
+                      type="button"
+                      role="option"
+                      aria-selected={false}
+                      data-search-result
+                      onClick={selectTaskResult}
+                      onKeyDown={handleResultKeyDown}
+                      className="w-full flex items-center justify-between gap-3 px-2 py-1.5 rounded-lg hover:bg-slate-800 cursor-pointer text-xs transition-colors text-left"
                     >
-                      <span className="font-medium text-slate-200">
+                      <span className="font-medium text-slate-200 truncate min-w-0">
                         {t.title}
                       </span>
-                      <span className="text-[10px] text-indigo-400">
+                      <span className="text-[10px] text-indigo-400 truncate shrink-0">
                         {t.status}
                       </span>
-                    </div>
+                    </button>
                   ))
                 ) : (
-                  <div className="text-xs text-slate-500 px-2 py-1 italic">
+                  <div
+                    role="presentation"
+                    className="text-xs text-slate-500 px-2 py-1 italic"
+                  >
                     No tasks found
                   </div>
                 )}
@@ -167,51 +248,6 @@ export const TopNav = ({
             <FolderPlus className="w-3.5 h-3.5" />
             <span>New Project</span>
           </button>
-        </div>
-
-        <div className="relative">
-          <button
-            onClick={() => setShowNotifications(!showNotifications)}
-            className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors relative"
-          >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-500 ring-2 ring-slate-900" />
-          </button>
-
-          {showNotifications && (
-            <>
-              <div
-                className="fixed inset-0 z-40"
-                onClick={() => setShowNotifications(false)}
-              />
-              <div className="absolute right-0 mt-2 w-80 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-4 z-50">
-                <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
-                  <span className="text-xs font-semibold text-slate-200">
-                    Notifications
-                  </span>
-                  <span className="text-[10px] text-indigo-400 font-medium">
-                    2 New
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  {notifications.map((n) => (
-                    <div
-                      key={n.id}
-                      className="p-2 rounded-lg bg-slate-950 border border-slate-800 text-xs"
-                    >
-                      <div className="flex justify-between text-slate-200 font-medium mb-1">
-                        <span>{n.title}</span>
-                        <span className="text-[10px] text-slate-500">
-                          {n.time}
-                        </span>
-                      </div>
-                      <p className="text-slate-400 text-[11px]">{n.text}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
         </div>
 
         <UserMenu />
