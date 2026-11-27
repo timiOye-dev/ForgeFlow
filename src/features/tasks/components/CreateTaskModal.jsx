@@ -1,46 +1,108 @@
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { useTasks } from '../../../app/contexts/TaskContext'
 import { useProjects } from '../../../app/contexts/ProjectContext'
 import { Modal } from '../../../shared/components/Modal'
+import {
+  getCreateTaskFormValues,
+  reconcileCreateTaskForm,
+  validateCreateTaskInput,
+} from '../../../shared/utils/taskForm'
 
 export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
   const { addTask } = useTasks()
   const { projects } = useProjects()
 
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    projectId: defaultProjectId || projects[0]?.id || '',
-    priority: 'Medium',
-    status: 'Todo',
-    dueDate: '',
-    estimatedHours: '4',
-    loggedHours: '0',
-  })
+  const [formData, setFormData] = useState(() =>
+    getCreateTaskFormValues(defaultProjectId, projects)
+  )
+  const [error, setError] = useState('')
+
+  const projectsRef = useRef(projects)
+
+  useLayoutEffect(() => {
+    projectsRef.current = projects
+  }, [projects])
+
+  const wasOpen = useRef(isOpen)
+  const previousDefaultProjectId = useRef(defaultProjectId)
+  const projectIdsKey = projects
+    .map((project) => String(project?.id ?? ''))
+    .join('|')
+
+  useLayoutEffect(() => {
+    const currentProjects = projectsRef.current
+    const sessionStart = isOpen && !wasOpen.current
+    const defaultProjectIdChanged =
+      previousDefaultProjectId.current !== defaultProjectId
+
+    if (!isOpen && wasOpen.current) {
+      setFormData(getCreateTaskFormValues(defaultProjectId, currentProjects))
+    } else if (isOpen) {
+      setFormData((currentForm) =>
+        reconcileCreateTaskForm(currentForm, {
+          defaultProjectId,
+          projects: currentProjects,
+          sessionStart,
+          defaultProjectIdChanged,
+        })
+      )
+    }
+
+    if (isOpen || (!isOpen && wasOpen.current)) setError('')
+
+    previousDefaultProjectId.current = defaultProjectId
+    wasOpen.current = isOpen
+  }, [isOpen, defaultProjectId, projectIdsKey])
+
+  const resetForm = () => {
+    setFormData(getCreateTaskFormValues(defaultProjectId, projects))
+    setError('')
+  }
+
+  const handleClose = () => {
+    resetForm()
+    onClose()
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!formData.title.trim()) return
 
-    addTask(formData)
+    const validation = validateCreateTaskInput(formData, projects)
 
-    setFormData({
-      title: '',
-      description: '',
-      projectId: defaultProjectId || projects[0]?.id || '',
-      priority: 'Medium',
-      status: 'Todo',
-      dueDate: '',
-      estimatedHours: '4',
-      loggedHours: '0',
-    })
+    if (!validation.success) {
+      setError(Object.values(validation.errors)[0])
+      return
+    }
 
+    const createdTask = addTask(formData)
+
+    if (!createdTask) {
+      setError('Unable to create task. Select a valid project.')
+      return
+    }
+
+    resetForm()
     onClose()
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add New Task">
+    <Modal isOpen={isOpen} onClose={handleClose} title="Add New Task">
       <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+        {error && (
+          <p
+            role="alert"
+            className="text-rose-400 bg-rose-950/40 border border-rose-900 rounded-lg px-3 py-2"
+          >
+            {error}
+          </p>
+        )}
+
+        {projects.length === 0 && (
+          <p className="text-amber-300 bg-amber-950/40 border border-amber-900 rounded-lg px-3 py-2">
+            Create a project before adding a task.
+          </p>
+        )}
+
         <div>
           <label className="block font-medium text-slate-300 mb-1">
             Task Title *
@@ -51,7 +113,7 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
             placeholder="e.g. Implement OAuth2 authentication flow"
             value={formData.title}
             onChange={(e) =>
-              setFormData({ ...formData, title: e.target.value })
+              setFormData((current) => ({ ...current, title: e.target.value }))
             }
             className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
           />
@@ -62,11 +124,16 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
             Project Assignment
           </label>
           <select
+            aria-label="Project Assignment"
+            disabled={projects.length === 0}
             value={formData.projectId}
             onChange={(e) =>
-              setFormData({ ...formData, projectId: e.target.value })
+              setFormData((current) => ({
+                ...current,
+                projectId: e.target.value,
+              }))
             }
-            className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500 disabled:opacity-60"
           >
             {projects.map((p) => (
               <option key={p.id} value={p.id}>
@@ -85,7 +152,10 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
             placeholder="Technical details, acceptance criteria, or relevant links..."
             value={formData.description}
             onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
+              setFormData((current) => ({
+                ...current,
+                description: e.target.value,
+              }))
             }
             className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
           />
@@ -99,7 +169,10 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
             <select
               value={formData.priority}
               onChange={(e) =>
-                setFormData({ ...formData, priority: e.target.value })
+                setFormData((current) => ({
+                  ...current,
+                  priority: e.target.value,
+                }))
               }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             >
@@ -116,7 +189,10 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
             <select
               value={formData.status}
               onChange={(e) =>
-                setFormData({ ...formData, status: e.target.value })
+                setFormData((current) => ({
+                  ...current,
+                  status: e.target.value,
+                }))
               }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             >
@@ -137,7 +213,10 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
               type="date"
               value={formData.dueDate}
               onChange={(e) =>
-                setFormData({ ...formData, dueDate: e.target.value })
+                setFormData((current) => ({
+                  ...current,
+                  dueDate: e.target.value,
+                }))
               }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             />
@@ -152,7 +231,10 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
               min="0"
               value={formData.estimatedHours}
               onChange={(e) =>
-                setFormData({ ...formData, estimatedHours: e.target.value })
+                setFormData((current) => ({
+                  ...current,
+                  estimatedHours: e.target.value,
+                }))
               }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             />
@@ -167,7 +249,10 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
               min="0"
               value={formData.loggedHours}
               onChange={(e) =>
-                setFormData({ ...formData, loggedHours: e.target.value })
+                setFormData((current) => ({
+                  ...current,
+                  loggedHours: e.target.value,
+                }))
               }
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-indigo-500"
             />
@@ -177,14 +262,15 @@ export const CreateTaskModal = ({ isOpen, onClose, defaultProjectId = '' }) => {
         <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors shadow-md shadow-indigo-600/20"
+            disabled={projects.length === 0}
+            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors shadow-md shadow-indigo-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Add Task
           </button>

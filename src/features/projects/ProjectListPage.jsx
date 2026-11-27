@@ -15,17 +15,19 @@ import { useProjects } from '../../app/contexts/ProjectContext'
 import { useTasks } from '../../app/contexts/TaskContext'
 import { Badge } from '../../shared/components/Badge'
 import { EmptyState } from '../../shared/components/EmptyState'
+import { getProjectTaskCount } from '../../shared/services/projectDeletionService'
 import { CreateProjectModal } from './components/CreateProjectModal'
 
 export const ProjectListPage = () => {
-  const { projects, deleteProject } = useProjects()
-  const { tasks } = useTasks()
+  const { projects } = useProjects()
+  const { tasks, deleteProjectWithTasks } = useTasks()
   const navigate = useNavigate()
 
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [priorityFilter, setPriorityFilter] = useState('All')
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [deletionError, setDeletionError] = useState('')
 
   const filteredProjects = projects.filter((p) => {
     const matchesSearch =
@@ -41,6 +43,27 @@ export const ProjectListPage = () => {
   })
 
   const statuses = ['All', 'In Progress', 'In Review', 'Planned', 'Completed']
+
+  const handleDeleteProject = (project) => {
+    const taskCount = getProjectTaskCount(tasks, project.id)
+    const message =
+      taskCount > 0
+        ? `Are you sure you want to delete "${project.name}"? ${taskCount} associated ${taskCount === 1 ? 'task will' : 'tasks will'} also be permanently deleted. This cannot be undone.`
+        : `Are you sure you want to delete "${project.name}"?`
+
+    if (!window.confirm(message)) return
+
+    const result = deleteProjectWithTasks(project.id)
+
+    if (!result.success) {
+      setDeletionError(
+        result.error?.message || 'Project deletion failed. Please try again.'
+      )
+      return
+    }
+
+    setDeletionError('')
+  }
 
   return (
     <div className="space-y-6">
@@ -63,6 +86,15 @@ export const ProjectListPage = () => {
           <span>New Project</span>
         </button>
       </div>
+
+      {deletionError && (
+        <div
+          role="alert"
+          className="p-3 rounded-xl bg-rose-950/40 border border-rose-900 text-xs text-rose-300"
+        >
+          {deletionError}
+        </div>
+      )}
 
       <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
         <div className="flex flex-col md:flex-row items-center justify-between gap-3">
@@ -201,15 +233,7 @@ export const ProjectListPage = () => {
                       Open Workspace →
                     </button>
                     <button
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            `Are you sure you want to delete "${p.name}"?`
-                          )
-                        ) {
-                          deleteProject(p.id)
-                        }
-                      }}
+                      onClick={() => handleDeleteProject(p)}
                       title="Delete project"
                       className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors"
                     >

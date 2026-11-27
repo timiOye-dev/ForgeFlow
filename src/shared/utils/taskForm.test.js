@@ -5,7 +5,9 @@ import { INITIAL_TASKS } from '../../mocks/initialData.js'
 import {
   TASK_PRIORITIES,
   TASK_STATUSES,
+  applyTaskCreate,
   applyTaskUpdate,
+  getCreateTaskFormValues,
   getNextTaskStatus,
   getTaskFormValues,
   getTaskPriorityOptions,
@@ -14,7 +16,10 @@ import {
   getTaskValidationContext,
   isValidTaskDueDate,
   normalizeTaskForm,
+  reconcileCreateTaskForm,
+  resolveCreateTaskProjectId,
   resolveTaskFormValues,
+  validateCreateTaskInput,
   validateTaskForm,
 } from './taskForm.js'
 
@@ -509,4 +514,148 @@ test('applyTaskUpdate reports invalid task data and missing tasks', () => {
   assert.equal(invalidList.error.code, 'INVALID_TASK_LIST')
   assert.equal(missingTask.success, false)
   assert.equal(missingTask.error.code, 'TASK_NOT_FOUND')
+})
+
+test('create form values use the intended project and fall back safely', () => {
+  assert.deepEqual(getCreateTaskFormValues('proj_2', projects), {
+    title: '',
+    description: '',
+    projectId: 'proj_2',
+    priority: 'Medium',
+    status: 'Todo',
+    dueDate: '',
+    estimatedHours: '4',
+    loggedHours: '0',
+  })
+
+  assert.equal(resolveCreateTaskProjectId('proj_deleted', projects), 'proj_1')
+  assert.equal(resolveCreateTaskProjectId('', projects), 'proj_1')
+  assert.equal(resolveCreateTaskProjectId('proj_2', []), '')
+  assert.equal(getCreateTaskFormValues('proj_1', []).projectId, '')
+})
+
+test('create form reconciliation preserves unrelated form input', () => {
+  const currentForm = {
+    title: 'Draft title',
+    description: 'Draft description',
+    projectId: 'proj_1',
+    priority: 'High',
+    status: 'In Review',
+    dueDate: '2026-11-01',
+    estimatedHours: '8',
+    loggedHours: '2',
+  }
+
+  assert.deepEqual(
+    reconcileCreateTaskForm(currentForm, {
+      defaultProjectId: 'proj_2',
+      projects,
+      sessionStart: true,
+    }),
+    getCreateTaskFormValues('proj_2', projects)
+  )
+
+  const defaultChanged = reconcileCreateTaskForm(currentForm, {
+    defaultProjectId: 'proj_2',
+    projects,
+    defaultProjectIdChanged: true,
+  })
+
+  assert.equal(defaultChanged.projectId, 'proj_2')
+  assert.equal(defaultChanged.title, 'Draft title')
+  assert.equal(defaultChanged.description, 'Draft description')
+  assert.equal(defaultChanged.priority, 'High')
+  assert.equal(defaultChanged.status, 'In Review')
+  assert.equal(defaultChanged.dueDate, '2026-11-01')
+
+  const remainingProjects = [projects[1]]
+  const selectedDeleted = reconcileCreateTaskForm(currentForm, {
+    defaultProjectId: 'proj_1',
+    projects: remainingProjects,
+  })
+
+  assert.equal(selectedDeleted.projectId, 'proj_2')
+  assert.equal(selectedDeleted.title, 'Draft title')
+  assert.equal(selectedDeleted.estimatedHours, '8')
+
+  const renamedProjects = [{ ...projects[0], name: 'Renamed' }, projects[1]]
+  assert.equal(
+    reconcileCreateTaskForm(currentForm, {
+      defaultProjectId: 'proj_1',
+      projects: renamedProjects,
+    }),
+    currentForm
+  )
+
+  const noProjects = reconcileCreateTaskForm(currentForm, {
+    defaultProjectId: 'proj_1',
+    projects: [],
+  })
+
+  assert.equal(noProjects.projectId, '')
+  assert.equal(noProjects.title, 'Draft title')
+})
+
+test('create validation complements the existing task validation rules', () => {
+  assert.equal(validateCreateTaskInput(makeTask(), projects).success, true)
+  assert.equal(
+    validateCreateTaskInput({ ...makeTask(), title: '  ' }, projects).errors
+      .title,
+    'Task title is required.'
+  )
+  assert.equal(
+    validateCreateTaskInput(
+      { ...makeTask(), projectId: 'proj_deleted' },
+      projects
+    ).errors.projectId,
+    'Select a valid project.'
+  )
+  assert.equal(
+    validateCreateTaskInput({ ...makeTask(), projectId: '' }, projects).errors
+      .projectId,
+    'Select a valid project.'
+  )
+  assert.equal(
+    validateCreateTaskInput({ ...makeTask(), status: 'Blocked' }, projects)
+      .errors.status,
+    'Select a valid task status.'
+  )
+  assert.equal(
+    validateCreateTaskInput({ ...makeTask(), priority: 'Urgent' }, projects)
+      .errors.priority,
+    'Select a valid task priority.'
+  )
+  assert.equal(
+    validateCreateTaskInput({ ...makeTask(), dueDate: '2026-02-30' }, projects)
+      .errors.dueDate,
+    'Enter a valid due date.'
+  )
+})
+
+test('applyTaskCreate adds valid tasks and rejects invalid projects', () => {
+  const tasks = [makeTask({ id: 'task_existing' })]
+  const originalTasks = clone(tasks)
+  const newTask = makeTask({ id: 'task_new', title: 'New task' })
+
+  const created = applyTaskCreate(tasks, projects, newTask)
+
+  assert.equal(created.success, true)
+  assert.equal(created.tasks.length, 2)
+  assert.equal(created.tasks[0], newTask)
+  assert.notEqual(created.tasks, tasks)
+  assert.deepEqual(tasks, originalTasks)
+
+  const invalidProject = applyTaskCreate(tasks, projects, {
+    ...newTask,
+    projectId: 'proj_deleted',
+  })
+  const noProjects = applyTaskCreate(tasks, [], newTask)
+  const invalidList = applyTaskCreate(null, projects, newTask)
+
+  assert.equal(invalidProject.success, false)
+  assert.equal(invalidProject.error.code, 'VALIDATION_ERROR')
+  assert.equal(noProjects.success, false)
+  assert.equal(invalidList.success, false)
+  assert.equal(invalidList.error.code, 'INVALID_TASK_LIST')
+  assert.deepEqual(tasks, originalTasks)
 })

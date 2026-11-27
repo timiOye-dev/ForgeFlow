@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react'
 import { INITIAL_PROJECTS } from '../../mocks/initialData'
+import { PROJECT_STORAGE_KEY } from '../../shared/services/projectDeletionService'
 import { applyProjectUpdate } from '../../shared/utils/projectForm'
 
 const ProjectContext = createContext(null)
@@ -7,7 +8,7 @@ const ProjectContext = createContext(null)
 export const ProjectProvider = ({ children }) => {
   const [projects, setProjects] = useState(() => {
     try {
-      const saved = localStorage.getItem('forgeflow_projects')
+      const saved = localStorage.getItem(PROJECT_STORAGE_KEY)
       if (!saved) return INITIAL_PROJECTS
       const parsed = JSON.parse(saved)
       return Array.isArray(parsed) ? parsed : INITIAL_PROJECTS
@@ -30,8 +31,10 @@ export const ProjectProvider = ({ children }) => {
     return nextProjects
   }
 
+  const replaceProjects = (nextProjects) => commitProjects(nextProjects)
+
   useEffect(() => {
-    localStorage.setItem('forgeflow_projects', JSON.stringify(projects))
+    localStorage.setItem(PROJECT_STORAGE_KEY, JSON.stringify(projects))
   }, [projects])
 
   const addProject = (projectData) => {
@@ -67,10 +70,6 @@ export const ProjectProvider = ({ children }) => {
     })
 
     return result
-  }
-
-  const deleteProject = (id) => {
-    commitProjects((prev) => prev.filter((p) => p.id !== id))
   }
 
   const getProjectById = (id) => {
@@ -189,7 +188,7 @@ export const ProjectProvider = ({ children }) => {
         projects,
         addProject,
         updateProject,
-        deleteProject,
+        replaceProjects,
         getProjectById,
         addMilestone,
         toggleMilestone,

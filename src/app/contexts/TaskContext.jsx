@@ -1,15 +1,23 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react'
 import { INITIAL_TASKS } from '../../mocks/initialData'
-import { applyTaskUpdate, getNextTaskStatus } from '../../shared/utils/taskForm'
+import {
+  TASK_STORAGE_KEY,
+  projectDeletionService,
+} from '../../shared/services/projectDeletionService'
+import {
+  applyTaskCreate,
+  applyTaskUpdate,
+  getNextTaskStatus,
+} from '../../shared/utils/taskForm'
 import { useProjects } from './ProjectContext'
 
 const TaskContext = createContext(null)
 
 export const TaskProvider = ({ children }) => {
-  const { projects } = useProjects()
+  const { projects, replaceProjects } = useProjects()
   const [tasks, setTasks] = useState(() => {
     try {
-      const saved = localStorage.getItem('forgeflow_tasks')
+      const saved = localStorage.getItem(TASK_STORAGE_KEY)
       if (!saved) return INITIAL_TASKS
       const parsed = JSON.parse(saved)
       return Array.isArray(parsed) ? parsed : INITIAL_TASKS
@@ -33,7 +41,7 @@ export const TaskProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    localStorage.setItem('forgeflow_tasks', JSON.stringify(tasks))
+    localStorage.setItem(TASK_STORAGE_KEY, JSON.stringify(tasks))
   }, [tasks])
 
   const addTask = (taskData) => {
@@ -52,7 +60,11 @@ export const TaskProvider = ({ children }) => {
       loggedHours: Number(taskData.loggedHours || 0),
       createdAt: new Date().toISOString().split('T')[0],
     }
-    commitTasks((prev) => [newTask, ...prev])
+    const result = applyTaskCreate(tasksRef.current, projects, newTask)
+
+    if (!result.success) return null
+
+    commitTasks(result.tasks)
     return newTask
   }
 
@@ -77,6 +89,20 @@ export const TaskProvider = ({ children }) => {
     commitTasks((prev) => prev.filter((t) => t.id !== id))
   }
 
+  const deleteProjectWithTasks = (projectId) => {
+    const publishDeletionState = (nextProjects, nextTasks) => {
+      replaceProjects(nextProjects)
+      commitTasks(nextTasks)
+    }
+
+    return projectDeletionService.deleteProjectCascade({
+      projects,
+      tasks: tasksRef.current,
+      projectId,
+      publishDeletionState,
+    })
+  }
+
   const toggleTaskStatus = (id) => {
     commitTasks((prev) =>
       prev.map((t) =>
@@ -96,6 +122,7 @@ export const TaskProvider = ({ children }) => {
         addTask,
         updateTask,
         deleteTask,
+        deleteProjectWithTasks,
         toggleTaskStatus,
         getTasksByProjectId,
       }}

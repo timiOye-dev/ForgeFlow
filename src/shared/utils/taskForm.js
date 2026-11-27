@@ -255,6 +255,114 @@ export function validateTaskForm(values, context = {}) {
   }
 }
 
+const CREATE_ORIGINAL_VALUE = '__forgeflow_create_task__'
+
+export function resolveCreateTaskProjectId(defaultProjectId, projects) {
+  if (projectExists(projects, defaultProjectId)) {
+    return asOptionValue(defaultProjectId)
+  }
+
+  const firstProjectId = asOptionValue(safeProjects(projects)[0]?.id)
+
+  return projectExists(projects, firstProjectId) ? firstProjectId : ''
+}
+
+export function getCreateTaskFormValues(defaultProjectId, projects) {
+  return {
+    title: '',
+    description: '',
+    projectId: resolveCreateTaskProjectId(defaultProjectId, projects),
+    priority: 'Medium',
+    status: 'Todo',
+    dueDate: '',
+    estimatedHours: '4',
+    loggedHours: '0',
+  }
+}
+
+export function getCreateTaskValidationContext(projects) {
+  return {
+    projects: safeProjects(projects),
+    originalProjectId: CREATE_ORIGINAL_VALUE,
+    originalStatus: CREATE_ORIGINAL_VALUE,
+    originalPriority: CREATE_ORIGINAL_VALUE,
+    originalDueDate: CREATE_ORIGINAL_VALUE,
+    dueDateTouched: true,
+    dueDateBadInput: false,
+  }
+}
+
+export function validateCreateTaskInput(values, projects) {
+  return validateTaskForm(values, getCreateTaskValidationContext(projects))
+}
+
+export function reconcileCreateTaskForm(
+  currentForm,
+  {
+    defaultProjectId = '',
+    projects,
+    sessionStart = false,
+    defaultProjectIdChanged = false,
+  } = {}
+) {
+  if (sessionStart) {
+    return getCreateTaskFormValues(defaultProjectId, projects)
+  }
+
+  const form = currentForm ?? {}
+  const availableProjects = safeProjects(projects)
+  const shouldResolveProject =
+    defaultProjectIdChanged || !projectExists(availableProjects, form.projectId)
+
+  if (!shouldResolveProject) {
+    return form
+  }
+
+  const resolvedProjectId = resolveCreateTaskProjectId(
+    defaultProjectId,
+    availableProjects
+  )
+
+  if (resolvedProjectId === asOptionValue(form.projectId)) {
+    return form
+  }
+
+  return { ...form, projectId: resolvedProjectId }
+}
+
+export function applyTaskCreate(tasks, projects, newTask) {
+  if (!Array.isArray(tasks)) {
+    return {
+      success: false,
+      error: {
+        code: 'INVALID_TASK_LIST',
+        message: 'Task data could not be loaded.',
+      },
+    }
+  }
+
+  const validation = validateCreateTaskInput(newTask, projects)
+
+  if (!validation.success) {
+    const [message] = Object.values(validation.errors)
+
+    return {
+      success: false,
+      error: {
+        code: 'VALIDATION_ERROR',
+        message,
+        errors: validation.errors,
+      },
+    }
+  }
+
+  return {
+    success: true,
+    tasks: [newTask, ...tasks],
+    task: newTask,
+  }
+}
+
 export function normalizeTaskForm(values) {
   return {
     title: asString(values?.title),
