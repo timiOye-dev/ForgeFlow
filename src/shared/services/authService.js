@@ -1,4 +1,5 @@
 import { DEMO_CREDENTIALS, INITIAL_USER } from '../../mocks/initialData.js'
+import { isSupportedTheme, normalizeTheme } from '../utils/theme.js'
 
 export { DEMO_CREDENTIALS }
 
@@ -211,7 +212,7 @@ function toUser(account) {
     avatar: account.profile.avatar ?? INITIAL_USER.avatar,
     title: account.profile.title ?? INITIAL_USER.title,
     bio: account.profile.bio ?? INITIAL_USER.bio,
-    theme: account.profile.theme ?? INITIAL_USER.theme,
+    theme: normalizeTheme(account.profile.theme),
     notifications:
       typeof account.profile.notifications === 'boolean'
         ? account.profile.notifications
@@ -237,6 +238,7 @@ function createAccountRecord({
     profile: {
       ...INITIAL_USER,
       ...profile,
+      theme: normalizeTheme(profile?.theme ?? INITIAL_USER.theme),
       name,
       email,
     },
@@ -547,8 +549,20 @@ export function createAuthService({
       )
     }
 
-    const profileUpdates = {}
-    for (const field of ['avatar', 'title', 'bio', 'theme']) {
+    if (updates.theme !== undefined && !isSupportedTheme(updates.theme)) {
+      return failure(
+        'VALIDATION_ERROR',
+        'Unsupported appearance option. Choose Light or Dark.'
+      )
+    }
+
+    const profileUpdates = {
+      theme:
+        updates.theme === undefined
+          ? normalizeTheme(currentAccount.profile.theme)
+          : updates.theme,
+    }
+    for (const field of ['avatar', 'title', 'bio']) {
       if (typeof updates[field] === 'string') {
         profileUpdates[field] = updates[field]
       }

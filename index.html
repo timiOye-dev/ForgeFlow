@@ -5,6 +5,20 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>forgeflow</title>
+    <script>
+      // Read-only hint to avoid a flash of the default theme. AuthContext and
+      // the account profile remain the authoritative source of truth.
+      try {
+        const cachedUserRaw = localStorage.getItem('forgeflow_user')
+        const cachedTheme = cachedUserRaw
+          ? JSON.parse(cachedUserRaw)?.theme
+          : null
+        document.documentElement.dataset.theme =
+          cachedTheme === 'light' ? 'light' : 'dark'
+      } catch {
+        document.documentElement.dataset.theme = 'dark'
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

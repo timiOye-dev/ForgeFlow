@@ -1,10 +1,14 @@
 import { useState } from 'react'
-import { User, Save, CheckCircle2, RefreshCw } from 'lucide-react'
+import { User, Save, CheckCircle2, RefreshCw, Sun, Moon } from 'lucide-react'
 import { useAuth } from '../../app/contexts/AuthContext'
+import { useTheme } from '../../app/contexts/ThemeContext'
+import { THEME_DARK, THEME_LIGHT } from '../../shared/utils/theme'
 import { INITIAL_PROJECTS, INITIAL_TASKS } from '../../mocks/initialData'
 
 export const AccountPage = () => {
   const { user, updateProfile } = useAuth()
+  const { theme, saveTheme } = useTheme()
+
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -12,17 +16,26 @@ export const AccountPage = () => {
     bio: user?.bio || '',
     avatar: user?.avatar || '',
   })
+  const [profileSavedSuccess, setProfileSavedSuccess] = useState(false)
+  const [profileSaveError, setProfileSaveError] = useState('')
 
-  const [savedSuccess, setSavedSuccess] = useState(false)
-  const [saveError, setSaveError] = useState('')
+  const [themeDraft, setThemeDraft] = useState({
+    theme,
+    sourceTheme: theme,
+  })
+  const selectedTheme =
+    themeDraft.sourceTheme === theme ? themeDraft.theme : theme
+  const [appearanceSaving, setAppearanceSaving] = useState(false)
+  const [appearanceSavedSuccess, setAppearanceSavedSuccess] = useState(false)
+  const [appearanceError, setAppearanceError] = useState('')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setSaveError('')
+    setProfileSaveError('')
 
     const result = await updateProfile(formData)
     if (!result.success) {
-      setSaveError(result.error.message)
+      setProfileSaveError(result.error.message)
       return
     }
 
@@ -34,9 +47,42 @@ export const AccountPage = () => {
       bio: updated.bio || '',
       avatar: updated.avatar || '',
     })
-    setSavedSuccess(true)
-    setTimeout(() => setSavedSuccess(false), 3000)
+    setProfileSavedSuccess(true)
+    setTimeout(() => setProfileSavedSuccess(false), 3000)
   }
+
+  const handleAppearanceSubmit = async (e) => {
+    e.preventDefault()
+    setAppearanceError('')
+    setAppearanceSavedSuccess(false)
+    setAppearanceSaving(true)
+
+    const result = await saveTheme(selectedTheme)
+    setAppearanceSaving(false)
+
+    if (!result.success) {
+      setAppearanceError(result.error.message)
+      return
+    }
+
+    setAppearanceSavedSuccess(true)
+    setTimeout(() => setAppearanceSavedSuccess(false), 3000)
+  }
+
+  const themeOptions = [
+    {
+      value: THEME_DARK,
+      label: 'Dark',
+      description: 'Low-light interface with dark surfaces.',
+      icon: Moon,
+    },
+    {
+      value: THEME_LIGHT,
+      label: 'Light',
+      description: 'Bright interface with light surfaces.',
+      icon: Sun,
+    },
+  ]
 
   const handleResetData = () => {
     if (
@@ -65,19 +111,22 @@ export const AccountPage = () => {
         </p>
       </div>
 
-      {savedSuccess && (
-        <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2">
+      {profileSavedSuccess && (
+        <div
+          role="status"
+          className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2"
+        >
           <CheckCircle2 className="w-4 h-4" />
           <span>Profile settings updated successfully!</span>
         </div>
       )}
 
-      {saveError && (
+      {profileSaveError && (
         <div
           role="alert"
           className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs"
         >
-          {saveError}
+          {profileSaveError}
         </div>
       )}
 
@@ -175,6 +224,88 @@ export const AccountPage = () => {
           >
             <Save className="w-4 h-4" />
             <span>Save Profile</span>
+          </button>
+        </form>
+      </div>
+
+      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm">
+        <h2 className="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">
+          Appearance
+        </h2>
+
+        <form onSubmit={handleAppearanceSubmit} className="space-y-4 text-xs">
+          <fieldset>
+            <legend className="font-medium text-slate-300 mb-3">Theme</legend>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {themeOptions.map((option) => {
+                const Icon = option.icon
+                const isSelected = selectedTheme === option.value
+
+                return (
+                  <label
+                    key={option.value}
+                    className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-slate-900 ${
+                      isSelected
+                        ? 'border-indigo-500 bg-indigo-500/10'
+                        : 'border-slate-700 bg-slate-950 hover:bg-slate-800'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="theme"
+                      value={option.value}
+                      checked={isSelected}
+                      onChange={() =>
+                        setThemeDraft({
+                          theme: option.value,
+                          sourceTheme: theme,
+                        })
+                      }
+                      className="sr-only"
+                    />
+                    <Icon className="w-4 h-4 mt-0.5 text-indigo-400" />
+                    <span>
+                      <span className="block font-semibold text-slate-100">
+                        {option.label}
+                      </span>
+                      <span className="block text-slate-400 mt-0.5">
+                        {option.description}
+                      </span>
+                    </span>
+                  </label>
+                )
+              })}
+            </div>
+          </fieldset>
+
+          {appearanceSavedSuccess && (
+            <div
+              role="status"
+              className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center gap-2"
+            >
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Appearance updated successfully!</span>
+            </div>
+          )}
+
+          {appearanceError && (
+            <div
+              role="alert"
+              className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300"
+            >
+              {appearanceError}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={appearanceSaving}
+            className="px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-colors shadow-lg shadow-indigo-600/20 flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <Save className="w-4 h-4" />
+            <span>
+              {appearanceSaving ? 'Saving Appearance...' : 'Save Appearance'}
+            </span>
           </button>
         </form>
       </div>

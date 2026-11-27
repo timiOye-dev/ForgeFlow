@@ -45,6 +45,23 @@ function readJson(storage, key) {
   return raw ? JSON.parse(raw) : null
 }
 
+function setStoredTheme(storage, accountId, theme) {
+  const accounts = readJson(storage, AUTH_STORAGE_KEYS.ACCOUNTS)
+  const account = accounts.find((candidate) => candidate.id === accountId)
+
+  if (!account) {
+    throw new Error(`Missing test account: ${accountId}`)
+  }
+
+  if (theme === undefined) {
+    delete account.profile.theme
+  } else {
+    account.profile.theme = theme
+  }
+
+  storage.setItem(AUTH_STORAGE_KEYS.ACCOUNTS, JSON.stringify(accounts))
+}
+
 function storageContains(storage, value) {
   return Object.values(AUTH_STORAGE_KEYS).some((key) => {
     const raw = storage.getItem(key)
@@ -372,6 +389,192 @@ test('profile email changes reject duplicates', async () => {
 
   assert.equal(duplicate.success, false)
   assert.equal(duplicate.error.code, 'EMAIL_ALREADY_EXISTS')
+})
+
+test('theme updates persist per account and survive session restoration', async () => {
+  const { service, storage } = createTestService()
+
+  const registered = await service.register({
+    name: 'Ada Lovelace',
+    email: 'ada@example.com',
+    password: 'password123',
+    confirmPassword: 'password123',
+  })
+
+  const light = service.updateProfile({ theme: 'light' })
+  assert.equal(light.success, true)
+  assert.equal(light.user.theme, 'light')
+  assert.equal(readJson(storage, AUTH_STORAGE_KEYS.USER).theme, 'light')
+  assert.equal(
+    readJson(storage, AUTH_STORAGE_KEYS.ACCOUNTS).find(
+      (account) => account.id === registered.user.id
+    ).profile.theme,
+    'light'
+  )
+
+  const restoredLight = createTestService(storage).service.restoreSession()
+  assert.equal(restoredLight.isAuthenticated, true)
+  assert.equal(restoredLight.user.theme, 'light')
+
+  const dark = service.updateProfile({ theme: 'dark' })
+  assert.equal(dark.success, true)
+  assert.equal(dark.user.theme, 'dark')
+
+  const restoredDark = createTestService(storage).service.restoreSession()
+  assert.equal(restoredDark.user.theme, 'dark')
+})
+
+test('theme follows the active account across logout and login', async () => {
+  const { service } = createTestService()
+
+  const ada = await service.register({
+    name: 'Ada Lovelace',
+    email: 'ada@example.com',
+    password: 'password123',
+    confirmPassword: 'password123',
+  })
+  service.updateProfile({ theme: 'light' })
+  service.logout()
+
+  const grace = await service.register({
+    name: 'Grace Hopper',
+    email: 'grace@example.com',
+    password: 'password123',
+    confirmPassword: 'password123',
+  })
+  assert.equal(grace.user.theme, 'dark')
+  service.logout()
+
+  const adaLogin = await service.login({
+    email: 'ada@example.com',
+    password: 'password123',
+  })
+  assert.equal(adaLogin.success, true)
+  assert.equal(adaLogin.user.id, ada.user.id)
+  assert.equal(adaLogin.user.theme, 'light')
+  service.logout()
+
+  const graceLogin = await service.login({
+    email: 'grace@example.com',
+    password: 'password123',
+  })
+  assert.equal(graceLogin.success, true)
+  assert.equal(graceLogin.user.theme, 'dark')
+})
+
+test('missing and invalid stored themes normalize to dark', async () => {
+  const { service, storage } = createTestService()
+
+  const registered = await service.register({
+    name: 'Ada Lovelace',
+    email: 'ada@example.com',
+    password: 'password123',
+    confirmPassword: 'password123',
+  })
+
+  setStoredTheme(storage, registered.user.id, undefined)
+  const restoredWithoutTheme =
+    createTestService(storage).service.restoreSession()
+  assert.equal(restoredWithoutTheme.user.theme, 'dark')
+  assert.equal(readJson(storage, AUTH_STORAGE_KEYS.USER).theme, 'dark')
+
+  setStoredTheme(storage, registered.user.id, 'solarized')
+  const restoredInvalidTheme =
+    createTestService(storage).service.restoreSession()
+  assert.equal(restoredInvalidTheme.user.theme, 'dark')
+  assert.equal(readJson(storage, AUTH_STORAGE_KEYS.USER).theme, 'dark')
+})
+
+test('unsupported theme updates fail without changing stored data', async () => {
+  const { service, storage } = createTestService()
+
+  await service.register({
+    name: 'Ada Lovelace',
+    email: 'ada@example.com',
+    password: 'password123',
+    confirmPassword: 'password123',
+  })
+
+  const accountsBeforeUpdate = storage.getItem(AUTH_STORAGE_KEYS.ACCOUNTS)
+  const userBeforeUpdate = storage.getItem(AUTH_STORAGE_KEYS.USER)
+  const result = service.updateProfile({ theme: 'neon' })
+
+  assert.equal(result.success, false)
+  assert.equal(result.error.code, 'VALIDATION_ERROR')
+  assert.match(result.error.message, /unsupported appearance option/i)
+  assert.equal(
+    storage.getItem(AUTH_STORAGE_KEYS.ACCOUNTS),
+    accountsBeforeUpdate
+  )
+  assert.equal(storage.getItem(AUTH_STORAGE_KEYS.USER), userBeforeUpdate)
+})
+
+test('profile updates preserve the saved theme', async () => {
+  const { service, storage } = createTestService()
+
+  const registered = await service.register({
+    name: 'Ada Lovelace',
+    email: 'ada@example.com',
+    password: 'password123',
+    confirmPassword: 'password123',
+  })
+  service.updateProfile({ theme: 'light' })
+
+  const updated = service.updateProfile({
+    name: 'Ada Byron',
+    email: '  ADA.BYRON@Example.COM ',
+    title: 'Countess of Computing',
+    bio: 'First computer programmer.',
+    avatar: 'https://example.com/ada.png',
+  })
+
+  assert.equal(updated.success, true)
+  assert.equal(updated.user.theme, 'light')
+  assert.equal(readJson(storage, AUTH_STORAGE_KEYS.USER).theme, 'light')
+  assert.equal(
+    readJson(storage, AUTH_STORAGE_KEYS.ACCOUNTS).find(
+      (account) => account.id === registered.user.id
+    ).profile.theme,
+    'light'
+  )
+})
+
+test('appearance updates preserve profile information', async () => {
+  const { service, storage } = createTestService()
+
+  await service.register({
+    name: 'Ada Lovelace',
+    email: 'ada@example.com',
+    password: 'password123',
+    confirmPassword: 'password123',
+  })
+
+  const profileUpdate = service.updateProfile({
+    name: 'Ada Byron',
+    email: 'ada.byron@example.com',
+    title: 'Countess of Computing',
+    bio: 'First computer programmer.',
+    avatar: 'https://example.com/ada.png',
+  })
+  const beforeAppearanceUpdate = profileUpdate.user
+
+  const appearanceUpdate = service.updateProfile({ theme: 'light' })
+  assert.equal(appearanceUpdate.success, true)
+  assert.equal(appearanceUpdate.user.name, beforeAppearanceUpdate.name)
+  assert.equal(appearanceUpdate.user.email, beforeAppearanceUpdate.email)
+  assert.equal(appearanceUpdate.user.title, beforeAppearanceUpdate.title)
+  assert.equal(appearanceUpdate.user.bio, beforeAppearanceUpdate.bio)
+  assert.equal(appearanceUpdate.user.avatar, beforeAppearanceUpdate.avatar)
+
+  const storedAccount = readJson(storage, AUTH_STORAGE_KEYS.ACCOUNTS).find(
+    (account) => account.id === beforeAppearanceUpdate.id
+  )
+  assert.equal(storedAccount.profile.name, 'Ada Byron')
+  assert.equal(storedAccount.profile.email, 'ada.byron@example.com')
+  assert.equal(storedAccount.profile.title, 'Countess of Computing')
+  assert.equal(storedAccount.profile.bio, 'First computer programmer.')
+  assert.equal(storedAccount.profile.avatar, 'https://example.com/ada.png')
+  assert.equal(storedAccount.profile.theme, 'light')
 })
 
 test('hashing failures fail closed without plaintext fallback', async () => {
