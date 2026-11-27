@@ -1,9 +1,12 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useRef } from 'react'
 import { INITIAL_TASKS } from '../../mocks/initialData'
+import { applyTaskUpdate, getNextTaskStatus } from '../../shared/utils/taskForm'
+import { useProjects } from './ProjectContext'
 
 const TaskContext = createContext(null)
 
 export const TaskProvider = ({ children }) => {
+  const { projects } = useProjects()
   const [tasks, setTasks] = useState(() => {
     try {
       const saved = localStorage.getItem('forgeflow_tasks')
@@ -14,6 +17,20 @@ export const TaskProvider = ({ children }) => {
       return INITIAL_TASKS
     }
   })
+
+  const tasksRef = useRef(tasks)
+
+  const commitTasks = (nextOrUpdater) => {
+    const nextTasks =
+      typeof nextOrUpdater === 'function'
+        ? nextOrUpdater(tasksRef.current)
+        : nextOrUpdater
+
+    tasksRef.current = nextTasks
+    setTasks(nextTasks)
+
+    return nextTasks
+  }
 
   useEffect(() => {
     localStorage.setItem('forgeflow_tasks', JSON.stringify(tasks))
@@ -35,32 +52,36 @@ export const TaskProvider = ({ children }) => {
       loggedHours: Number(taskData.loggedHours || 0),
       createdAt: new Date().toISOString().split('T')[0],
     }
-    setTasks((prev) => [newTask, ...prev])
+    commitTasks((prev) => [newTask, ...prev])
     return newTask
   }
 
-  const updateTask = (id, updatedFields) => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, ...updatedFields } : t))
-    )
+  const updateTask = (id, updatedFields, options = {}) => {
+    let result
+
+    commitTasks((currentTasks) => {
+      result = applyTaskUpdate(
+        currentTasks,
+        projects,
+        id,
+        updatedFields,
+        options
+      )
+      return result.success ? result.tasks : currentTasks
+    })
+
+    return result
   }
 
   const deleteTask = (id) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id))
+    commitTasks((prev) => prev.filter((t) => t.id !== id))
   }
 
   const toggleTaskStatus = (id) => {
-    setTasks((prev) =>
-      prev.map((t) => {
-        if (t.id !== id) return t
-        const statusCycle = {
-          Todo: 'In Progress',
-          'In Progress': 'In Review',
-          'In Review': 'Done',
-          Done: 'Todo',
-        }
-        return { ...t, status: statusCycle[t.status] || 'Todo' }
-      })
+    commitTasks((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, status: getNextTaskStatus(t.status) } : t
+      )
     )
   }
 

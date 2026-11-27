@@ -20,6 +20,7 @@ import { useTasks } from '../../app/contexts/TaskContext'
 import { Badge } from '../../shared/components/Badge'
 import { EmptyState } from '../../shared/components/EmptyState'
 import { CreateTaskModal } from '../tasks/components/CreateTaskModal'
+import { EditTaskModal } from '../tasks/components/EditTaskModal'
 import { EditProjectModal } from './components/EditProjectModal'
 
 export const ProjectDetailPage = () => {
@@ -41,6 +42,7 @@ export const ProjectDetailPage = () => {
 
   const [activeTab, setActiveTab] = useState('overview')
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
+  const [editingTask, setEditingTask] = useState(null)
   const [isEditProjectModalOpen, setIsEditProjectModalOpen] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
 
@@ -359,6 +361,14 @@ export const ProjectDetailPage = () => {
                     <span className="text-[11px] text-slate-500">
                       {t.dueDate}
                     </span>
+                    <button
+                      onClick={() => setEditingTask(t)}
+                      aria-label={`Edit task "${t.title}"`}
+                      title="Edit task"
+                      className="p-1 rounded-lg text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition-colors"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
               ))
@@ -561,6 +571,13 @@ export const ProjectDetailPage = () => {
         isOpen={isTaskModalOpen}
         onClose={() => setIsTaskModalOpen(false)}
         defaultProjectId={project.id}
+      />
+
+      <EditTaskModal
+        key={editingTask?.id ?? 'none'}
+        isOpen={Boolean(editingTask)}
+        onClose={() => setEditingTask(null)}
+        task={editingTask}
       />
 
       <EditProjectModal

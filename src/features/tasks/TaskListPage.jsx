@@ -7,12 +7,14 @@ import {
   Clock,
   Trash2,
   Folder,
+  Pencil,
 } from 'lucide-react'
 import { useTasks } from '../../app/contexts/TaskContext'
 import { useProjects } from '../../app/contexts/ProjectContext'
 import { Badge } from '../../shared/components/Badge'
 import { EmptyState } from '../../shared/components/EmptyState'
 import { CreateTaskModal } from './components/CreateTaskModal'
+import { EditTaskModal } from './components/EditTaskModal'
 
 export const TaskListPage = () => {
   const { tasks, toggleTaskStatus, deleteTask } = useTasks()
@@ -23,6 +25,7 @@ export const TaskListPage = () => {
   const [priorityFilter, setPriorityFilter] = useState('All')
   const [projectFilter, setProjectFilter] = useState('All')
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [editingTask, setEditingTask] = useState(null)
 
   const filteredTasks = tasks.filter((t) => {
     const matchesSearch =
@@ -181,11 +184,21 @@ export const TaskListPage = () => {
                   </div>
 
                   <button
+                    onClick={() => setEditingTask(t)}
+                    aria-label={`Edit task "${t.title}"`}
+                    title="Edit task"
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition-colors"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+
+                  <button
                     onClick={() => {
                       if (window.confirm(`Delete task "${t.title}"?`)) {
                         deleteTask(t.id)
                       }
                     }}
+                    aria-label={`Delete task "${t.title}"`}
                     className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -206,6 +219,13 @@ export const TaskListPage = () => {
       <CreateTaskModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+      />
+
+      <EditTaskModal
+        key={editingTask?.id ?? 'none'}
+        isOpen={Boolean(editingTask)}
+        onClose={() => setEditingTask(null)}
+        task={editingTask}
       />
     </div>
   )
