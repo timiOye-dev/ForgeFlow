@@ -412,7 +412,7 @@ FF-039 Profile
 
 FF-040 Appearance
 
-FF-041 Preferences
+FF-041 Preferences (Deferred / Out of V1)
 
 Definition of Done
 

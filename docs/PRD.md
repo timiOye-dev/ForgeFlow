@@ -148,7 +148,6 @@ From a learning perspective, success also includes:
 
 - Profile
 - Appearance
-- Preferences
 
 ---
 
@@ -159,6 +158,7 @@ The following features are intentionally excluded:
 - AI Assistant
 - Real-time collaboration
 - Notifications
+- Preferences
 - Calendar integration
 - Time tracking
 - Team permissions
